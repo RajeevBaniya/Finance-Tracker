@@ -23,6 +23,10 @@ mongoose
 app.use("/financial-records", financialRecordRouter);
 app.use("/budgets", budgetRouter);
 
+app.get("/", (req, res) => {
+  res.send("Finance Tracker API is running!");
+});
+
 app.listen(port, () => {
   console.log(`Server Running on Port ${port}`);
 });
