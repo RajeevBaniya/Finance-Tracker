@@ -17,7 +17,6 @@ This is the frontend for the FinanceTracker application, built with Next.js and 
 - TailwindCSS
 - shadcn/ui
 - Recharts
-- JavaScript
 
 ## Setup
 
