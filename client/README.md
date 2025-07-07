@@ -42,6 +42,3 @@ This is the frontend for the FinanceTracker application, built with Next.js and 
 - `src/hooks/` - Custom React hooks
 - `src/lib/` - API and utility functions
 
-## License
-
-MIT
