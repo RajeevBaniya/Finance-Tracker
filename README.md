@@ -71,6 +71,4 @@ cd FinanceTracker
 
 The frontend will be available at `http://localhost:3000` by default.
 
-## License
 
-MIT
