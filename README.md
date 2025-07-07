@@ -12,7 +12,7 @@ FinanceTracker is a full-stack web application for managing personal finances, t
 
 ## Tech Stack
 
-- **Frontend:** Next.js, React, TailwindCSS, shadcn/ui, Recharts, JavaScript
+- **Frontend:** Next.js, React, TailwindCSS, shadcn/ui, Recharts
 - **Backend:** Node.js, Express, MongoDB
 
 ## Project Structure
