@@ -86,9 +86,15 @@ export function BudgetList() {
       return;
     }
 
+    // Find the original budget to get category, month, year
+    const originalBudget = budgets.find((b) => b._id === budgetId);
+
     try {
       await updateBudget(budgetId, {
         amount: parseFloat(editForm.amount),
+        category: originalBudget.category,
+        month: originalBudget.month,
+        year: originalBudget.year,
       });
       setEditingId(null);
       setEditForm({});
