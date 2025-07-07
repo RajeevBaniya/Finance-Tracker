@@ -36,7 +36,3 @@ This is the backend for the FinanceTracker application, built with Node.js, Expr
 
 - `src/routes/` - API route handlers
 - `src/schema/` - Mongoose schemas
-
-## License
-
-MIT
