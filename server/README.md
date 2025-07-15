@@ -7,7 +7,7 @@ The backend API server for FinanceTracker built with Node.js, Express, and Mongo
 - Node.js
 - Express.js
 - MongoDB with Mongoose
-- JWT Authentication
+- JWT Authentication(Clerk)
 - Express Middleware
 
 ## Directory Structure
@@ -79,84 +79,11 @@ server/
    npm start
    ```
 
-## API Documentation
-
-### Authentication
-
-All protected routes require a valid JWT token in the Authorization header:
-
-```
-Authorization: Bearer <token>
 ```
 
-### Endpoints
 
-#### Budgets
 
-- `POST /api/budgets` - Create a new budget
-- `GET /api/budgets` - Get all budgets
-- `GET /api/budgets/:id` - Get specific budget
-- `PUT /api/budgets/:id` - Update budget
-- `DELETE /api/budgets/:id` - Delete budget
 
-#### Transactions
 
-- `POST /api/transactions` - Create transaction
-- `GET /api/transactions` - Get all transactions
-- `GET /api/transactions/:id` - Get specific transaction
-- `PUT /api/transactions/:id` - Update transaction
-- `DELETE /api/transactions/:id` - Delete transaction
 
-## Data Models
-
-### Budget Schema
-
-```javascript
-{
-  category: String,
-  amount: Number,
-  startDate: Date,
-  endDate: Date,
-  userId: String
-}
 ```
-
-### Transaction Schema
-
-```javascript
-{
-  amount: Number,
-  category: String,
-  description: String,
-  date: Date,
-  type: String,
-  userId: String
-}
-```
-
-## Error Handling
-
-The API uses standard HTTP status codes:
-
-- 200: Success
-- 201: Created
-- 400: Bad Request
-- 401: Unauthorized
-- 403: Forbidden
-- 404: Not Found
-- 500: Server Error
-
-## Security Measures
-
-- JWT Authentication
-- Request validation
-- User data isolation
-- Error handling
-- Input sanitization
-
-## Development
-
-- Use `npm run dev` for development with nodemon
-- API testing with Postman or similar tools
-- MongoDB connection validation on startup
-- Proper error logging

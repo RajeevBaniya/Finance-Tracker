@@ -70,38 +70,3 @@ client/
    ```bash
    npm run dev
    ```
-
-4. Open [http://localhost:3000](http://localhost:3000)
-
-## Available Scripts
-
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm start` - Start production server
-- `npm run lint` - Run ESLint
-- `npm run format` - Format code with Prettier
-
-## Component Library
-
-We use shadcn/ui for our component library. Components are located in `src/components/ui/` and can be customized through the `components.json` configuration.
-
-## State Management
-
-- React Context for global state
-- Custom hooks for data fetching and calculations
-- Server state management through API client
-
-## Styling
-
-- TailwindCSS for utility-first styling
-- Custom theme configuration in `tailwind.config.js`
-- Global styles in `src/app/globals.css`
-
-## Best Practices
-
-- Component-based architecture
-- Custom hooks for reusable logic
-- Consistent error handling
-- Loading states for better UX
-- Responsive design principles
-- Type-safe development

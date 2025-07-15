@@ -28,17 +28,6 @@ A full-stack personal finance management application that helps users track thei
   - Secure sign-up and sign-in
   - Protected routes and API endpoints
 
-## Project Structure
-
-- `client/` - Next.js frontend application
-- `server/` - Node.js backend API
-
-## Prerequisites
-
-- Node.js (v18 or higher)
-- npm or yarn package manager
-- MongoDB database
-
 ## Quick Start
 
 1. Clone the repository:
@@ -83,15 +72,3 @@ JWT_SECRET=your_jwt_secret
 ```
 NEXT_PUBLIC_API_URL=http://localhost:5000
 ```
-
-## Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
