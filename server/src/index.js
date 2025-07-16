@@ -14,7 +14,11 @@ const port = process.env.PORT || 4001;
 // Configure CORS before other middleware
 app.use(
   cors({
-    origin: process.env.NEXT_PUBLIC_FRONTEND_URL || "http://localhost:3000",
+    origin: [
+      process.env.FRONTEND_URL || "http://localhost:3000",
+      /\.vercel\.app$/, // Allow all Vercel deployments
+      /\.onrender\.com$/, // Allow Render deployments
+    ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
@@ -38,6 +42,24 @@ app.use(
   financialRecordRouter
 );
 app.use("/budgets", requireAuth, extractUserId, budgetRouter);
+
+// Health check endpoint for deployment monitoring
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    status: "OK",
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+  });
+});
+
+// Root endpoint
+app.get("/", (req, res) => {
+  res.status(200).json({
+    message: "FinanceTracker API Server",
+    version: "1.0.0",
+    status: "running",
+  });
+});
 
 // Error handling middleware
 app.use((err, req, res, next) => {

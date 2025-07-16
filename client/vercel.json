@@ -1,0 +1,13 @@
+{
+  "build": {
+    "env": {
+      "NEXT_TELEMETRY_DISABLED": "1"
+    }
+  },
+  "functions": {
+    "app/**": {
+      "maxDuration": 10
+    }
+  },
+  "regions": ["iad1"]
+}
