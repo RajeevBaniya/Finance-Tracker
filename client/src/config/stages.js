@@ -65,9 +65,18 @@ export const STAGE_INFO = {
 
 // Predefined categories for transactions
 export const TRANSACTION_CATEGORIES = [
-  { value: "food", label: "Food", icon: "🍕", color: "#3b82f6" },
-  { value: "rent", label: "Rent", icon: "🏠", color: "#ef4444" },
   { value: "salary", label: "Salary", icon: "💰", color: "#10b981" },
+  { value: "freelance", label: "Freelance", icon: "💼", color: "#059669" },
+  { value: "investment", label: "Investment", icon: "📈", color: "#0891b2" },
+  { value: "rent", label: "Rent", icon: "🏠", color: "#ef4444" },
+  { value: "groceries", label: "Groceries", icon: "🛒", color: "#dc2626" },
+  {
+    value: "transportation",
+    label: "Transportation",
+    icon: "🚗",
+    color: "#ea580c",
+  },
+  { value: "food", label: "Food", icon: "🍕", color: "#3b82f6" },
   { value: "utilities", label: "Utilities", icon: "⚡", color: "#f59e0b" },
   {
     value: "entertainment",
@@ -75,6 +84,10 @@ export const TRANSACTION_CATEGORIES = [
     icon: "🎬",
     color: "#8b5cf6",
   },
+  { value: "healthcare", label: "Healthcare", icon: "🏥", color: "#db2777" },
+  { value: "shopping", label: "Shopping", icon: "🛍️", color: "#be185d" },
+  { value: "education", label: "Education", icon: "📚", color: "#7c3aed" },
+  { value: "travel", label: "Travel", icon: "✈️", color: "#0369a1" },
   { value: "other", label: "Other", icon: "📝", color: "#6b7280" },
 ];
 

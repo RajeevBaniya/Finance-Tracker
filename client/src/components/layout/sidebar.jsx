@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import {
   Sheet,
   SheetContent,
+  SheetDescription,
   SheetTrigger,
   SheetTitle,
   SheetHeader,
@@ -122,6 +123,9 @@ export function MobileMenuButton() {
       <SheetContent side="left" className="w-64 p-0">
         <SheetHeader className="p-0">
           <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+          <SheetDescription className="sr-only">
+            Navigation menu for FinanceTracker application
+          </SheetDescription>
         </SheetHeader>
         <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-finance-surface px-6 pb-4">
           <div className="flex h-14 sm:h-16 shrink-0 items-center justify-between">

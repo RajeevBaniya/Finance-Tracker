@@ -41,6 +41,8 @@ export function TransactionForm() {
     category: "",
     paymentMethod: "",
     currency: DEFAULT_FORM_CURRENCY, // Use form's own default currency
+    fromAccount: "",
+    toAccount: "",
   });
 
   // Removed useEffect that was syncing with selectedCurrency
@@ -119,6 +121,8 @@ export function TransactionForm() {
         category: formData.category,
         paymentMethod: formData.paymentMethod,
         currency: formData.currency,
+        fromAccount: formData.fromAccount.trim(),
+        toAccount: formData.toAccount.trim(),
       };
 
       await addRecord(newRecord);
@@ -131,6 +135,8 @@ export function TransactionForm() {
         category: "",
         paymentMethod: "",
         currency: DEFAULT_FORM_CURRENCY, // Reset to form's default currency
+        fromAccount: "",
+        toAccount: "",
       });
     } catch (error) {
       console.error("Error adding transaction:", error);
@@ -229,6 +235,42 @@ export function TransactionForm() {
                 {errors.amount || errors.currency}
               </p>
             )}
+          </div>
+
+          {/* From */}
+          <div className="space-y-1.5">
+            <Label
+              htmlFor="fromAccount"
+              className="text-sm font-medium text-black"
+            >
+              From (Optional)
+            </Label>
+            <Input
+              id="fromAccount"
+              type="text"
+              placeholder="e.g., My Bank Account, Cash, etc."
+              value={formData.fromAccount}
+              onChange={(e) => handleInputChange("fromAccount", e.target.value)}
+              className="w-full"
+            />
+          </div>
+
+          {/* To */}
+          <div className="space-y-1.5">
+            <Label
+              htmlFor="toAccount"
+              className="text-sm font-medium text-black"
+            >
+              To (Optional)
+            </Label>
+            <Input
+              id="toAccount"
+              type="text"
+              placeholder="e.g., John Doe, Store Name, etc."
+              value={formData.toAccount}
+              onChange={(e) => handleInputChange("toAccount", e.target.value)}
+              className="w-full"
+            />
           </div>
 
           {/* Category */}

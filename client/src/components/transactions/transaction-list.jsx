@@ -68,6 +68,8 @@ export function TransactionList() {
       category: record.category || "",
       paymentMethod: record.paymentMethod || "",
       currency: record.currency || "USD",
+      fromAccount: record.fromAccount || "",
+      toAccount: record.toAccount || "",
     });
   };
 
@@ -108,6 +110,8 @@ export function TransactionList() {
         category: editForm.category || "",
         paymentMethod: editForm.paymentMethod || "",
         currency: editForm.currency || "USD",
+        fromAccount: editForm.fromAccount?.trim() || "",
+        toAccount: editForm.toAccount?.trim() || "",
       });
       setEditingId(null);
       setEditForm({});
@@ -281,25 +285,31 @@ export function TransactionList() {
             </div>
           ) : (
             <div className="overflow-x-auto rounded-md border border-gray-400">
-              <Table>
+              <Table className="w-full">
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="text-black font-semibold">
+                    <TableHead className="text-black font-semibold min-w-[150px] px-3">
                       Description
                     </TableHead>
-                    <TableHead className="text-black font-semibold">
+                    <TableHead className="text-black font-semibold min-w-[110px] px-2">
                       Amount
                     </TableHead>
-                    <TableHead className="text-black font-semibold">
+                    <TableHead className="text-black font-semibold min-w-[120px] px-2">
                       Category
                     </TableHead>
-                    <TableHead className="text-black font-semibold">
+                    <TableHead className="text-black font-semibold min-w-[130px] px-2">
                       Payment Method
                     </TableHead>
-                    <TableHead className="text-black font-semibold">
+                    <TableHead className="text-black font-semibold min-w-[90px] px-2">
+                      From
+                    </TableHead>
+                    <TableHead className="text-black font-semibold min-w-[90px] px-2">
+                      To
+                    </TableHead>
+                    <TableHead className="text-black font-semibold min-w-[100px] px-2">
                       Date
                     </TableHead>
-                    <TableHead className="text-black font-semibold">
+                    <TableHead className="text-black font-semibold min-w-[90px] px-2 text-center">
                       Actions
                     </TableHead>
                   </TableRow>
@@ -310,7 +320,7 @@ export function TransactionList() {
                       {editingId === record._id ? (
                         // Edit mode
                         <>
-                          <TableCell>
+                          <TableCell className="min-w-[150px] px-3">
                             <Input
                               value={editForm.description || ""}
                               onChange={(e) =>
@@ -320,10 +330,10 @@ export function TransactionList() {
                                 }))
                               }
                               placeholder="Description"
-                              className="min-w-[120px]"
+                              className="w-full text-sm h-8"
                             />
                           </TableCell>
-                          <TableCell>
+                          <TableCell className="min-w-[110px] px-2">
                             <div className="space-y-1">
                               <Input
                                 value={editForm.amount || ""}
@@ -331,7 +341,7 @@ export function TransactionList() {
                                   handleAmountChange(e.target.value)
                                 }
                                 placeholder="0.00"
-                                className={`min-w-[100px] ${
+                                className={`w-full text-sm h-8 ${
                                   editErrors.amount ? "border-red-500" : ""
                                 }`}
                               />
@@ -342,7 +352,7 @@ export function TransactionList() {
                               )}
                             </div>
                           </TableCell>
-                          <TableCell>
+                          <TableCell className="min-w-[120px] px-2">
                             <Select
                               value={editForm.category || ""}
                               onValueChange={(value) =>
@@ -352,7 +362,7 @@ export function TransactionList() {
                                 }))
                               }
                             >
-                              <SelectTrigger className="min-w-[120px]">
+                              <SelectTrigger className="w-full text-sm h-8">
                                 <SelectValue placeholder="Category" />
                               </SelectTrigger>
                               <SelectContent>
@@ -367,7 +377,7 @@ export function TransactionList() {
                               </SelectContent>
                             </Select>
                           </TableCell>
-                          <TableCell>
+                          <TableCell className="min-w-[130px] px-2">
                             <Select
                               value={editForm.paymentMethod || ""}
                               onValueChange={(value) =>
@@ -377,8 +387,8 @@ export function TransactionList() {
                                 }))
                               }
                             >
-                              <SelectTrigger className="min-w-[140px]">
-                                <SelectValue placeholder="Payment Method" />
+                              <SelectTrigger className="w-full text-sm h-8">
+                                <SelectValue placeholder="Method" />
                               </SelectTrigger>
                               <SelectContent>
                                 {PAYMENT_METHODS.map((method) => (
@@ -392,7 +402,33 @@ export function TransactionList() {
                               </SelectContent>
                             </Select>
                           </TableCell>
-                          <TableCell>
+                          <TableCell className="min-w-[90px] px-2">
+                            <Input
+                              value={editForm.fromAccount || ""}
+                              onChange={(e) =>
+                                setEditForm((prev) => ({
+                                  ...prev,
+                                  fromAccount: e.target.value,
+                                }))
+                              }
+                              placeholder="From"
+                              className="w-full text-sm h-8"
+                            />
+                          </TableCell>
+                          <TableCell className="min-w-[90px] px-2">
+                            <Input
+                              value={editForm.toAccount || ""}
+                              onChange={(e) =>
+                                setEditForm((prev) => ({
+                                  ...prev,
+                                  toAccount: e.target.value,
+                                }))
+                              }
+                              placeholder="To"
+                              className="w-full text-sm h-8"
+                            />
+                          </TableCell>
+                          <TableCell className="min-w-[100px] px-2">
                             <Input
                               type="date"
                               value={
@@ -402,25 +438,26 @@ export function TransactionList() {
                                       .split("T")[0]
                                   : ""
                               }
-                              className="min-w-[140px]"
+                              className="w-full text-sm h-8"
                               readOnly
                             />
                           </TableCell>
-                          <TableCell>
-                            <div className="flex space-x-2">
+                          <TableCell className="min-w-[90px] px-2">
+                            <div className="flex justify-center gap-1">
                               <Button
                                 size="sm"
                                 onClick={() => saveEdit(record._id)}
-                                className="bg-green-600 hover:bg-green-700"
+                                className="bg-green-600 hover:bg-green-700 h-7 w-7 p-0"
                               >
-                                <Check className="h-4 w-4" />
+                                <Check className="h-3 w-3" />
                               </Button>
                               <Button
                                 size="sm"
                                 variant="outline"
                                 onClick={cancelEdit}
+                                className="h-7 w-7 p-0"
                               >
-                                <X className="h-4 w-4" />
+                                <X className="h-3 w-3" />
                               </Button>
                             </div>
                           </TableCell>
@@ -428,61 +465,80 @@ export function TransactionList() {
                       ) : (
                         // View mode
                         <>
-                          <TableCell className="font-medium text-black">
-                            {record.description}
+                          <TableCell className="font-medium text-black min-w-[150px] px-3">
+                            <div className="truncate text-sm">
+                              {record.description}
+                            </div>
                           </TableCell>
-                          <TableCell>
+                          <TableCell className="min-w-[110px] px-2">
                             <span
-                              className={
+                              className={`text-sm font-semibold ${
                                 record.amount >= 0
-                                  ? "text-green-600 font-semibold"
-                                  : "text-red-600 font-semibold"
-                              }
+                                  ? "text-green-600"
+                                  : "text-red-600"
+                              }`}
                             >
                               {formatCurrency(record.amount)}
                             </span>
                           </TableCell>
-                          <TableCell>
-                            <span className="inline-flex items-center text-black">
+                          <TableCell className="min-w-[120px] px-2">
+                            <span className="inline-flex items-center text-black text-sm">
                               {
                                 TRANSACTION_CATEGORIES.find(
                                   (cat) => cat.value === record.category
                                 )?.icon
                               }{" "}
-                              {
-                                TRANSACTION_CATEGORIES.find(
-                                  (cat) => cat.value === record.category
-                                )?.label
-                              }
+                              <span className="truncate ml-1">
+                                {
+                                  TRANSACTION_CATEGORIES.find(
+                                    (cat) => cat.value === record.category
+                                  )?.label
+                                }
+                              </span>
                             </span>
                           </TableCell>
-                          <TableCell className="text-black">
-                            {
-                              PAYMENT_METHODS.find(
-                                (method) =>
-                                  method.value === record.paymentMethod
-                              )?.label
-                            }
+                          <TableCell className="text-black min-w-[130px] px-2">
+                            <div className="truncate text-sm">
+                              {
+                                PAYMENT_METHODS.find(
+                                  (method) =>
+                                    method.value === record.paymentMethod
+                                )?.label
+                              }
+                            </div>
                           </TableCell>
-                          <TableCell className="text-black">
-                            {formatDate(record.date)}
+                          <TableCell className="text-black text-sm min-w-[90px] px-2">
+                            <div className="truncate">
+                              {record.fromAccount || "-"}
+                            </div>
                           </TableCell>
-                          <TableCell>
-                            <div className="flex space-x-2">
+                          <TableCell className="text-black text-sm min-w-[90px] px-2">
+                            <div className="truncate">
+                              {record.toAccount || "-"}
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-black min-w-[100px] px-2">
+                            <div className="text-sm">
+                              {formatDate(record.date)}
+                            </div>
+                          </TableCell>
+                          <TableCell className="min-w-[90px] px-2">
+                            <div className="flex justify-center gap-1">
                               <Button
                                 size="sm"
                                 variant="outline"
                                 onClick={() => startEdit(record)}
+                                className="h-7 w-7 p-0"
                               >
-                                <Edit2 className="h-4 w-4" />
+                                <Edit2 className="h-3 w-3" />
                               </Button>
                               <Button
                                 size="sm"
                                 variant="outline"
                                 onClick={() => handleDelete(record._id)}
-                                className="text-red-600 hover:text-red-700"
+                                className="text-red-600 hover:text-red-700 h-7 w-7 p-0"
                               >
-                                <Trash2 className="h-4 w-4" />
+                                <Trash2 className="h-3 w-3" />
                               </Button>
                             </div>
                           </TableCell>

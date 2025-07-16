@@ -10,6 +10,8 @@ const financialRecordSchema = new mongoose.Schema({
   category: { type: String, required: true },
   paymentMethod: { type: String, required: true },
   currency: { type: String, required: true, default: "USD" },
+  fromAccount: { type: String, required: false },
+  toAccount: { type: String, required: false },
 });
 
 // Create indexes for better query performance
