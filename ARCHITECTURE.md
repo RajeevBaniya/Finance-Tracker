@@ -167,7 +167,6 @@ client/src/
 
 - Multi-currency transactions and budgets
 - Currency-specific filtering and calculations
-- Global currency selector
 
 ### Budget Management
 
