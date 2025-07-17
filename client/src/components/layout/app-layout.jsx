@@ -257,7 +257,7 @@ const SignInPage = memo(function SignInPage() {
                   </h3>
                 </div>
                 <p className="text-finance-secondary text-xs sm:text-sm">
-                  Support for global currencies and exchange rates
+                  Support for multiple currencies for your transactions
                 </p>
               </div>
             </div>
