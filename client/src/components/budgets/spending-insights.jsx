@@ -1,7 +1,8 @@
 "use client";
 
-import { useBudget } from "@/context/budget-context.jsx";
-import { useFinancial } from "@/context/financial-context.jsx";
+import React from "react";
+import { useBudget } from "@/features/budget";
+import { useFinancial } from "@/features/financial";
 import {
   Card,
   CardContent,
@@ -13,7 +14,10 @@ import { AlertTriangle, Target, Banknote } from "lucide-react";
 
 export function SpendingInsights({ selectedCategory }) {
   const { spendingInsights, budgets, loading, budgetComparison } = useBudget();
-  const { formatCurrency } = useFinancial();
+  const { formatCurrency, allTimeData, totalIncome } = useFinancial();
+
+  // Use all-time data for budget availability warnings
+  const { totalAmount } = allTimeData;
 
   if (loading) {
     return (
@@ -35,6 +39,37 @@ export function SpendingInsights({ selectedCategory }) {
       </Card>
     );
   }
+
+  // Check if user has income before showing spending insights
+  if (!totalIncome || totalIncome <= 0) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Target className="h-5 w-5" />
+            Spending Insights
+          </CardTitle>
+          <CardDescription>
+            Add income to view spending insights
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center py-8">
+            <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+              <span className="text-2xl">💰</span>
+            </div>
+            <p className="text-black mb-2">No income found</p>
+            <p className="text-sm text-gray-600">
+              Add deposits first to get spending insights and budget analysis
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Only hide if no existing budgets - users should see insights for existing budgets
+  // even if they can't create new ones
 
   if (!budgets || budgets.length === 0) {
     return (
@@ -111,6 +146,21 @@ export function SpendingInsights({ selectedCategory }) {
           Your spending patterns for {currentMonth}
         </CardDescription>
       </CardHeader>
+
+      {/* Low funds notification when viewing existing budget insights */}
+      {totalAmount <= 0 && budgets && budgets.length > 0 && (
+        <div className="mx-6 mb-4 p-3 bg-orange-50 border border-orange-200 rounded-lg">
+          <div className="flex items-center gap-2 text-sm">
+            <span className="text-orange-600">⚠️</span>
+            <span className="text-orange-800">
+              <strong>No funds available for new budgets</strong> - Current
+              balance: {formatCurrency(totalAmount)}. Add more income to create
+              additional budgets.
+            </span>
+          </div>
+        </div>
+      )}
+
       <CardContent>
         {/* Summary Header */}
         <div className="mb-4 p-3 bg-gray-50/80 rounded-lg border border-gray-100">

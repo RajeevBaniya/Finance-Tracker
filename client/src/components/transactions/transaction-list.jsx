@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useFinancial } from "@/context/financial-context.jsx";
+import React, { useState } from "react";
+import { useFinancial } from "@/features/financial";
 import {
   TRANSACTION_CATEGORIES,
   PAYMENT_METHODS,

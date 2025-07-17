@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import { useFinancial } from "@/context/financial-context.jsx";
+import React, { useState } from "react";
+import { useFinancial } from "@/features/financial";
 import {
   TRANSACTION_CATEGORIES,
   PAYMENT_METHODS,
-  CURRENCIES,
+  TRANSACTION_TYPES,
 } from "@/config/stages";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,12 +27,9 @@ import {
 import { Plus, Loader2 } from "lucide-react";
 
 export function TransactionForm() {
-  const { addRecord } = useFinancial(); // Removed selectedCurrency dependency
+  const { addRecord, selectedCurrency } = useFinancial(); // Get global currency
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
-
-  // Default currency for the form (independent from global currency)
-  const DEFAULT_FORM_CURRENCY = "USD";
 
   const [formData, setFormData] = useState({
     description: "",
@@ -40,7 +37,7 @@ export function TransactionForm() {
     date: new Date().toISOString().split("T")[0], // Default to today's date
     category: "",
     paymentMethod: "",
-    currency: DEFAULT_FORM_CURRENCY, // Use form's own default currency
+    transactionType: "deposit", // Default to deposit
     fromAccount: "",
     toAccount: "",
   });
@@ -64,22 +61,21 @@ export function TransactionForm() {
       newErrors.description = "Description is required";
     }
 
-    // Enhanced amount validation
+    // Enhanced amount validation - only positive numbers allowed
     if (!formData.amount || formData.amount.trim() === "") {
       newErrors.amount = "Amount is required";
     } else {
-      // Check for invalid number formats like +-7000, --500, ++200, abc123
+      // Only allow positive numbers since we handle the sign automatically
       const cleanAmount = formData.amount.trim();
-      const numberRegex = /^-?\d+(\.\d{1,2})?$/; // Only allow valid number formats
+      const numberRegex = /^\d+(\.\d{1,2})?$/; // Only allow positive number formats
 
       if (!numberRegex.test(cleanAmount)) {
-        newErrors.amount =
-          "Please enter a valid number (e.g., 100, -50, 25.50)";
+        newErrors.amount = "Please enter a positive number (e.g., 100, 25.50)";
       } else {
         const parsedAmount = parseFloat(cleanAmount);
         if (isNaN(parsedAmount) || parsedAmount === 0) {
           newErrors.amount = "Amount cannot be zero or invalid";
-        } else if (Math.abs(parsedAmount) > 999999999) {
+        } else if (parsedAmount > 999999999) {
           newErrors.amount = "Amount is too large";
         }
       }
@@ -97,8 +93,8 @@ export function TransactionForm() {
       newErrors.paymentMethod = "Please select a payment method";
     }
 
-    if (!formData.currency) {
-      newErrors.currency = "Please select a currency";
+    if (!formData.transactionType) {
+      newErrors.transactionType = "Please select transaction type";
     }
 
     setErrors(newErrors);
@@ -114,13 +110,21 @@ export function TransactionForm() {
     try {
       setLoading(true);
 
+      // Calculate the final amount based on transaction type
+      let finalAmount = parseFloat(formData.amount);
+      if (formData.transactionType === "expense") {
+        finalAmount = -Math.abs(finalAmount); // Ensure it's negative for expenses
+      } else {
+        finalAmount = Math.abs(finalAmount); // Ensure it's positive for deposits
+      }
+
       const newRecord = {
         date: new Date(formData.date).toISOString(),
         description: formData.description.trim(),
-        amount: parseFloat(formData.amount),
+        amount: finalAmount,
         category: formData.category,
         paymentMethod: formData.paymentMethod,
-        currency: formData.currency,
+        currency: selectedCurrency, // Use global currency
         fromAccount: formData.fromAccount.trim(),
         toAccount: formData.toAccount.trim(),
       };
@@ -134,7 +138,7 @@ export function TransactionForm() {
         date: new Date().toISOString().split("T")[0],
         category: "",
         paymentMethod: "",
-        currency: DEFAULT_FORM_CURRENCY, // Reset to form's default currency
+        transactionType: "deposit", // Reset to default transaction type
         fromAccount: "",
         toAccount: "",
       });
@@ -194,83 +198,110 @@ export function TransactionForm() {
             )}
           </div>
 
-          {/* Amount with Currency */}
-          <div className="space-y-1.5">
-            <Label htmlFor="amount" className="text-sm font-medium text-black">
-              Amount
-            </Label>
-            <div className="flex gap-2 flex-wrap sm:flex-nowrap">
-              {/* Currency Selector */}
-              <Select
-                value={formData.currency}
-                onValueChange={(value) => handleInputChange("currency", value)}
+          {/* Type and Amount - Single Row */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+            {/* Transaction Type */}
+            <div className="space-y-1.5">
+              <Label
+                htmlFor="transactionType"
+                className="text-sm font-medium text-black"
               >
-                <SelectTrigger className="w-[90px] sm:w-[120px]">
-                  <SelectValue placeholder="Currency" />
+                Type
+              </Label>
+              <Select
+                value={formData.transactionType}
+                onValueChange={(value) =>
+                  handleInputChange("transactionType", value)
+                }
+              >
+                <SelectTrigger
+                  className={`w-full ${
+                    errors.transactionType ? "border-red-500" : ""
+                  }`}
+                >
+                  <SelectValue placeholder="Select type" />
                 </SelectTrigger>
                 <SelectContent>
-                  {CURRENCIES.map((currency) => (
-                    <SelectItem key={currency.value} value={currency.value}>
+                  {TRANSACTION_TYPES.map((type) => (
+                    <SelectItem key={type.value} value={type.value}>
                       <span className="flex items-center gap-2">
-                        <span>{currency.symbol}</span>
-                        <span>{currency.value}</span>
+                        <span>{type.icon}</span>
+                        <span>{type.label}</span>
                       </span>
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
+              {errors.transactionType && (
+                <p className="text-xs sm:text-sm text-red-500">
+                  {errors.transactionType}
+                </p>
+              )}
+            </div>
 
-              {/* Amount Input */}
+            {/* Amount */}
+            <div className="space-y-1.5">
+              <Label
+                htmlFor="amount"
+                className="text-sm font-medium text-black"
+              >
+                Amount
+              </Label>
               <Input
                 id="amount"
                 type="text"
                 placeholder="0.00"
                 value={formData.amount}
                 onChange={(e) => handleInputChange("amount", e.target.value)}
-                className={`flex-1 ${errors.amount ? "border-red-500" : ""}`}
+                className={`w-full ${errors.amount ? "border-red-500" : ""}`}
+              />
+              {errors.amount && (
+                <p className="text-xs sm:text-sm text-red-500">
+                  {errors.amount}
+                </p>
+              )}
+            </div>
+          </div>
+
+          {/* From and To - Single Row */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+            {/* From */}
+            <div className="space-y-1.5">
+              <Label
+                htmlFor="fromAccount"
+                className="text-sm font-medium text-black"
+              >
+                From (Optional)
+              </Label>
+              <Input
+                id="fromAccount"
+                type="text"
+                placeholder="e.g., My Bank Account, Cash, etc."
+                value={formData.fromAccount}
+                onChange={(e) =>
+                  handleInputChange("fromAccount", e.target.value)
+                }
+                className="w-full"
               />
             </div>
-            {(errors.amount || errors.currency) && (
-              <p className="text-xs sm:text-sm text-red-500">
-                {errors.amount || errors.currency}
-              </p>
-            )}
-          </div>
 
-          {/* From */}
-          <div className="space-y-1.5">
-            <Label
-              htmlFor="fromAccount"
-              className="text-sm font-medium text-black"
-            >
-              From (Optional)
-            </Label>
-            <Input
-              id="fromAccount"
-              type="text"
-              placeholder="e.g., My Bank Account, Cash, etc."
-              value={formData.fromAccount}
-              onChange={(e) => handleInputChange("fromAccount", e.target.value)}
-              className="w-full"
-            />
-          </div>
-
-          {/* To */}
-          <div className="space-y-1.5">
-            <Label
-              htmlFor="toAccount"
-              className="text-sm font-medium text-black"
-            >
-              To (Optional)
-            </Label>
-            <Input
-              id="toAccount"
-              type="text"
-              placeholder="e.g., John Doe, Store Name, etc."
-              value={formData.toAccount}
-              onChange={(e) => handleInputChange("toAccount", e.target.value)}
-              className="w-full"
-            />
+            {/* To */}
+            <div className="space-y-1.5">
+              <Label
+                htmlFor="toAccount"
+                className="text-sm font-medium text-black"
+              >
+                To (Optional)
+              </Label>
+              <Input
+                id="toAccount"
+                type="text"
+                placeholder="e.g., John Doe, Store Name, etc."
+                value={formData.toAccount}
+                onChange={(e) => handleInputChange("toAccount", e.target.value)}
+                className="w-full"
+              />
+            </div>
           </div>
 
           {/* Category */}

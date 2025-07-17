@@ -3,8 +3,9 @@
 import { TransactionList } from "@/components/transactions/transaction-list";
 import { CategoryChart } from "@/components/charts/category-chart";
 import { MonthlyBarChart } from "@/components/charts/monthly-bar-chart";
-import { useFinancial } from "@/context/financial-context.jsx";
+import { useFinancial } from "@/features/financial";
 import { CurrencySelector } from "@/components/ui/currency-selector";
+import { MonthPicker } from "@/components/ui/month-picker";
 import {
   Card,
   CardContent,
@@ -30,16 +31,19 @@ export default function Dashboard() {
     totalIncome,
     totalExpenses,
     selectedCurrency,
+    selectedMonth,
+    selectedYear,
+    setSelectedMonth,
+    setSelectedYear,
   } = useFinancial();
 
   // Calculate some dashboard stats
   const totalTransactions = records.length;
   const thisMonthTransactions = records.filter((record) => {
     const recordDate = new Date(record.date);
-    const now = new Date();
     return (
-      recordDate.getMonth() === now.getMonth() &&
-      recordDate.getFullYear() === now.getFullYear()
+      recordDate.getMonth() === selectedMonth &&
+      recordDate.getFullYear() === selectedYear
     );
   }).length;
 
@@ -49,14 +53,23 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      {/* Header with Currency Selector - Responsive layout like Budgets page */}
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
-        <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-gray-900"></h1>
-        </div>
-        {/* Currency selector - always visible, responsive positioning */}
-        <div className="flex-shrink-0">
-          <CurrencySelector />
+      {/* Header with Month Picker and Currency Selector */}
+      <div className="flex flex-col sm:flex-col lg:flex-row lg:items-center lg:justify-between gap-3 lg:gap-4">
+        <h1 className="text-2xl font-bold text-gray-900 flex-shrink-0">
+          Dashboard
+        </h1>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between lg:justify-end gap-3">
+          <div className="w-auto sm:w-48">
+            <MonthPicker
+              selectedMonth={selectedMonth}
+              selectedYear={selectedYear}
+              onMonthChange={setSelectedMonth}
+              onYearChange={setSelectedYear}
+            />
+          </div>
+          <div className="flex-shrink-0">
+            <CurrencySelector />
+          </div>
         </div>
       </div>
 

@@ -1,16 +1,18 @@
+// Budget context: manages budget state and comparisons
 "use client";
 
 import { createContext, useContext, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
-import { useFinancial } from "./financial-context.jsx";
-import { useBudgetData } from "@/hooks/use-budget-data";
-import { useBudgetCalculations } from "@/hooks/use-budget-calculations";
+import { useFinancial } from "../../financial/context/financial-context.jsx";
+import { useBudgetData } from "../hooks/use-budget-data";
+import { useBudgetCalculations } from "../hooks/use-budget-calculations";
 
 const BudgetContext = createContext(undefined);
 
 export const BudgetProvider = ({ children }) => {
   const { userId, isLoaded } = useAuth();
-  const { records, selectedCurrency } = useFinancial();
+  const { records, selectedCurrency, selectedMonth, selectedYear } =
+    useFinancial();
   const [selectedCategory, setSelectedCategory] = useState(null);
 
   // Use custom hooks for budget data and calculations
@@ -34,7 +36,9 @@ export const BudgetProvider = ({ children }) => {
     records,
     allBudgets,
     selectedCurrency,
-    selectedCategory
+    selectedCategory,
+    selectedMonth,
+    selectedYear
   );
 
   // Enhanced add budget function - use the selected currency from context

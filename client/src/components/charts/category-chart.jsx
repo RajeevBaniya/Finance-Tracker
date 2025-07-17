@@ -16,7 +16,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useFinancial } from "@/context/financial-context.jsx";
+import { useFinancial } from "@/features/financial";
 import { TRANSACTION_CATEGORIES } from "@/config/stages";
 
 // Custom tooltip for the pie chart
@@ -145,7 +145,7 @@ export function CategoryChart() {
 
   // Prepare data for pie chart with colors and percentages
   const totalAmount = categoryData.reduce(
-    (sum, item) => sum + Math.abs(item.total),
+    (sum, item) => sum + Math.abs(item.amount || 0),
     0
   );
 
@@ -159,15 +159,15 @@ export function CategoryChart() {
 
       const percentage =
         totalAmount > 0
-          ? ((Math.abs(item.total) / totalAmount) * 100).toFixed(1)
+          ? ((Math.abs(item.amount || 0) / totalAmount) * 100).toFixed(1)
           : 0;
 
       return {
         category: item.category, // Use the display name from the data
-        value: Math.abs(item.total), // Use absolute value for pie chart
-        count: item.count,
-        color: categoryInfo.color,
-        icon: categoryInfo.icon,
+        value: Math.abs(item.amount || 0), // Use absolute value for pie chart
+        count: item.count || 1, // Default to 1 if count doesn't exist
+        color: item.color || categoryInfo.color,
+        icon: item.icon || categoryInfo.icon,
         percentage: parseFloat(percentage),
       };
     })

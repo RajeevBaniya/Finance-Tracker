@@ -1,5 +1,4 @@
-// Custom hook for financial data management
-// Handles CRUD operations for financial records with user authentication
+// Hook for fetching and managing financial records
 
 import { useState, useCallback, useEffect, useMemo } from "react";
 import { useAuth } from "@clerk/nextjs";

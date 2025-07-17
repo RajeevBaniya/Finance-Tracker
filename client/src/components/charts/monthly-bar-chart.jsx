@@ -16,7 +16,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useFinancial } from "@/context/financial-context.jsx";
+import { useFinancial } from "@/features/financial";
 
 // Custom tooltip for the bar chart
 const CustomTooltip = ({ active, payload, label, formatCurrency }) => {

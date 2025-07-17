@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { useBudget } from "@/context/budget-context.jsx";
-import { useFinancial } from "@/context/financial-context.jsx";
+import React, { useState, useEffect } from "react";
+import { useBudget } from "@/features/budget";
+import { useFinancial } from "@/features/financial";
 import { TRANSACTION_CATEGORIES } from "@/config/stages";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,7 +25,10 @@ import { PlusCircle } from "lucide-react";
 
 export function BudgetForm() {
   const { addBudget, availableCategories, budgets } = useBudget();
-  const { formatCurrency } = useFinancial();
+  const { formatCurrency, allTimeData } = useFinancial();
+
+  // Use all-time data for budget validation (budgets should be based on overall available funds)
+  const { totalAmount, totalIncome, totalExpenses } = allTimeData;
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
 
@@ -74,6 +77,11 @@ export function BudgetForm() {
           newErrors.amount = "Budget amount must be greater than zero";
         } else if (parsedAmount > 999999999) {
           newErrors.amount = "Budget amount is too large";
+        } else if (parsedAmount > totalAmount) {
+          // Check if budget amount exceeds available funds
+          newErrors.amount = `Budget amount exceeds available funds. You have ${formatCurrency(
+            totalAmount
+          )} available but trying to budget ${formatCurrency(parsedAmount)}.`;
         }
       }
     }
@@ -122,6 +130,93 @@ export function BudgetForm() {
       }
     );
   };
+
+  // Check if user has any income before allowing budget creation
+  if (!totalIncome || totalIncome <= 0) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <PlusCircle className="h-5 w-5" />
+            Set Budget
+          </CardTitle>
+          <CardDescription>Add income before creating budgets</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center py-6">
+            <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+              <span className="text-2xl">💰</span>
+            </div>
+            <p className="text-sm text-gray-700 mb-2">No income found</p>
+            <p className="text-xs text-gray-500 mb-4">
+              You need to add at least one deposit (income) transaction before
+              you can create budgets.
+            </p>
+            <p className="text-xs text-blue-600">
+              Go to Transactions → Add Transaction → Select "Deposit" → Add your
+              income
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Check if user has available money left for budgeting after expenses
+  if (totalAmount <= 0) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <PlusCircle className="h-5 w-5" />
+            Set Budget
+          </CardTitle>
+          <CardDescription>No available funds for budgeting</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center py-6">
+            <div className="w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center">
+              <span className="text-2xl">📊</span>
+            </div>
+            <p className="text-sm text-gray-700 mb-2">No funds available</p>
+            <p className="text-xs text-gray-500 mb-3">
+              Your current balance is {formatCurrency(totalAmount)}. You've
+              spent all your income.
+            </p>
+            <div className="text-xs bg-gray-50 p-3 rounded-lg border mb-4">
+              <div className="space-y-1">
+                <div className="flex justify-between">
+                  <span>Total Income:</span>
+                  <span className="text-green-600">
+                    {formatCurrency(totalIncome)}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Total Expenses:</span>
+                  <span className="text-red-600">
+                    {formatCurrency(totalExpenses)}
+                  </span>
+                </div>
+                <div className="flex justify-between font-medium border-t pt-1">
+                  <span>Available for Budget:</span>
+                  <span
+                    className={
+                      totalAmount > 0 ? "text-green-600" : "text-red-600"
+                    }
+                  >
+                    {formatCurrency(totalAmount)}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <p className="text-xs text-blue-600">
+              Add more income (deposits) to create budgets
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   if (availableCategories.length === 0) {
     return (
@@ -209,6 +304,15 @@ export function BudgetForm() {
                 onChange={(e) => handleInputChange("amount", e.target.value)}
                 className={`h-10 ${errors.amount ? "border-red-500" : ""}`}
               />
+
+              {/* Available Funds Info */}
+              <div className="flex items-center justify-between text-xs bg-blue-50 p-2 rounded border border-blue-200">
+                <span className="text-blue-700">Available for Budget:</span>
+                <span className="font-semibold text-blue-800">
+                  {formatCurrency(totalAmount)}
+                </span>
+              </div>
+
               {errors.amount && (
                 <p className="text-xs text-red-500">{errors.amount}</p>
               )}

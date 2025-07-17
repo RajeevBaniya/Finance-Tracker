@@ -1,8 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { useBudget } from "@/context/budget-context.jsx";
-import { useFinancial } from "@/context/financial-context.jsx";
+import React, { useState } from "react";
 import {
   Card,
   CardContent,
@@ -10,6 +8,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useBudget } from "@/features/budget";
+import { useFinancial } from "@/features/financial";
 import {
   Select,
   SelectContent,
@@ -34,7 +34,10 @@ export function BudgetComparisonChart({
   setSelectedCategory,
 }) {
   const { budgetComparison, loading } = useBudget();
-  const { formatCurrency } = useFinancial();
+  const { formatCurrency, allTimeData, totalIncome } = useFinancial();
+
+  // Use all-time data for budget availability warnings
+  const { totalAmount } = allTimeData;
 
   // Filter budget comparison data based on selected category
   const filteredBudgetData =
@@ -83,6 +86,35 @@ export function BudgetComparisonChart({
       </Card>
     );
   }
+
+  // Check if user has income before showing budget comparison
+  if (!totalIncome || totalIncome <= 0) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <BarChart3 className="h-5 w-5" />
+            Budget vs Actual
+          </CardTitle>
+          <CardDescription>Add income to start budgeting</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center py-8">
+            <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+              <span className="text-2xl">💰</span>
+            </div>
+            <p className="text-black mb-2">No income found</p>
+            <p className="text-sm text-gray-600">
+              Add deposits first to create and compare budgets
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Only hide if no existing budgets - users should see comparisons for existing budgets
+  // even if they can't create new ones
 
   if (!budgetComparison || budgetComparison.length === 0) {
     return (
@@ -139,6 +171,21 @@ export function BudgetComparisonChart({
           </div>
         </div>
       </CardHeader>
+
+      {/* Low funds notification when viewing existing budgets */}
+      {totalAmount <= 0 && budgetComparison && budgetComparison.length > 0 && (
+        <div className="mx-6 mb-4 p-3 bg-orange-50 border border-orange-200 rounded-lg">
+          <div className="flex items-center gap-2 text-sm">
+            <span className="text-orange-600">⚠️</span>
+            <span className="text-orange-800">
+              <strong>No funds available for new budgets</strong> - Current
+              balance: {formatCurrency(totalAmount)}. Add more income to create
+              additional budgets.
+            </span>
+          </div>
+        </div>
+      )}
+
       <CardContent>
         {!selectedCategory ? (
           <div className="text-center py-8 bg-finance-card rounded-lg border border-gray-300">

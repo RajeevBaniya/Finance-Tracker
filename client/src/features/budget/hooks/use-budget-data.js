@@ -1,5 +1,4 @@
-// Custom hook for budget data management
-// Handles CRUD operations for budgets with user authentication
+// Hook for fetching and managing budget records
 
 import { useState, useCallback, useEffect, useMemo } from "react";
 import { useAuth } from "@clerk/nextjs";

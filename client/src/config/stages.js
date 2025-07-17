@@ -98,6 +98,12 @@ export const PAYMENT_METHODS = [
   { value: "bank_transfer", label: "Bank Transfer" },
 ];
 
+// Transaction types
+export const TRANSACTION_TYPES = [
+  { value: "deposit", label: "Deposit", icon: "💰", description: "Money coming in (Income)" },
+  { value: "expense", label: "Expense", icon: "💸", description: "Money going out (Expense)" },
+];
+
 // Currency options
 export const CURRENCIES = [
   {

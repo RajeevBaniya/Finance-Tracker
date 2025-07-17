@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { useBudget } from "@/context/budget-context.jsx";
-import { useFinancial } from "@/context/financial-context.jsx";
+import React, { useState } from "react";
+import { useBudget } from "@/features/budget";
+import { useFinancial } from "@/features/financial";
 import { TRANSACTION_CATEGORIES } from "@/config/stages";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,7 +27,7 @@ import { Edit2, Trash2, Check, X, Target } from "lucide-react";
 
 export function BudgetList() {
   const { budgets, updateBudget, deleteBudget } = useBudget();
-  const { formatCurrency } = useFinancial();
+  const { formatCurrency, totalAmount } = useFinancial();
   const [editingId, setEditingId] = useState(null);
   const [editForm, setEditForm] = useState({});
   const [editErrors, setEditErrors] = useState({});
@@ -38,7 +38,7 @@ export function BudgetList() {
   });
 
   // Validate edit form
-  const validateEdit = (amount) => {
+  const validateEdit = (amount, budgetId = null) => {
     const newErrors = {};
 
     // Enhanced amount validation
@@ -57,6 +57,19 @@ export function BudgetList() {
           newErrors.amount = "Budget amount must be greater than zero";
         } else if (parsedAmount > 999999999) {
           newErrors.amount = "Budget amount is too large";
+        } else if (budgetId) {
+          // For editing: calculate available funds including current budget amount
+          const currentBudget = budgets.find((b) => b._id === budgetId);
+          const currentBudgetAmount = currentBudget ? currentBudget.amount : 0;
+          const availableForEdit = totalAmount + currentBudgetAmount;
+
+          if (parsedAmount > availableForEdit) {
+            newErrors.amount = `Budget amount exceeds available funds. You have ${formatCurrency(
+              availableForEdit
+            )} available (including current budget) but trying to budget ${formatCurrency(
+              parsedAmount
+            )}.`;
+          }
         }
       }
     }
@@ -83,7 +96,7 @@ export function BudgetList() {
 
   // Save changes
   const saveEdit = async (budgetId) => {
-    if (!validateEdit(editForm.amount)) {
+    if (!validateEdit(editForm.amount, budgetId)) {
       return;
     }
 
@@ -240,7 +253,7 @@ export function BudgetList() {
                                 amount: value,
                               }));
                               // Real-time validation
-                              validateEdit(value);
+                              validateEdit(value, budget._id);
                             }}
                             className={`w-full ${
                               editErrors.amount ? "border-red-500" : ""
@@ -348,7 +361,7 @@ export function BudgetList() {
                               ...prev,
                               amount: value,
                             }));
-                            validateEdit(value);
+                            validateEdit(value, budget._id);
                           }}
                           className={`w-full ${
                             editErrors.amount ? "border-red-500" : ""
