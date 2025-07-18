@@ -18,7 +18,8 @@ export default function TransactionsPage() {
           Transactions
         </h1>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between lg:justify-end gap-3">
-          <div className="w-auto sm:w-48">
+          {/* MonthPicker: Only visible on lg+ */}
+          <div className="w-auto sm:w-48 hidden lg:block">
             <MonthPicker
               selectedMonth={selectedMonth}
               selectedYear={selectedYear}
@@ -37,6 +38,16 @@ export default function TransactionsPage() {
         {/* Transaction Form - Takes 4 columns on large screens */}
         <div className="lg:col-span-4 w-full">
           <TransactionForm />
+        </div>
+
+        {/* MonthPicker: Only visible on mobile/tablet, between form and list */}
+        <div className="block lg:hidden col-span-1 w-full flex justify-end pr-4 mb-2">
+          <MonthPicker
+            selectedMonth={selectedMonth}
+            selectedYear={selectedYear}
+            onMonthChange={setSelectedMonth}
+            onYearChange={setSelectedYear}
+          />
         </div>
 
         {/* Transaction List - Takes 8 columns on large screens */}

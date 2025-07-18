@@ -240,9 +240,6 @@ export function TransactionList() {
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3">
               <div className="flex-1 min-w-0">
                 <CardTitle>Transactions</CardTitle>
-                <CardDescription>
-                  Manage your financial transactions
-                </CardDescription>
               </div>
             </div>
           </div>

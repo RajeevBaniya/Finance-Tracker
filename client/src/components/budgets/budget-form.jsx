@@ -31,11 +31,30 @@ export function BudgetForm() {
   const { totalAmount, totalIncome, totalExpenses } = allTimeData;
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  const [availableBudget, setAvailableBudget] = useState(totalAmount);
 
   const [formData, setFormData] = useState({
     category: "",
     amount: "",
   });
+
+  // Calculate available budget by subtracting existing budgets from total amount
+  useEffect(() => {
+    // Start with total amount
+    let available = totalAmount;
+
+    // Subtract all current month's budgets
+    const currentMonth = new Date().getMonth() + 1; // 1-12
+    const currentYear = new Date().getFullYear();
+
+    budgets.forEach((budget) => {
+      if (budget.month === currentMonth && budget.year === currentYear) {
+        available -= budget.amount;
+      }
+    });
+
+    setAvailableBudget(available);
+  }, [totalAmount, budgets]);
 
   // Validate form
   const validateForm = () => {
@@ -77,10 +96,10 @@ export function BudgetForm() {
           newErrors.amount = "Budget amount must be greater than zero";
         } else if (parsedAmount > 999999999) {
           newErrors.amount = "Budget amount is too large";
-        } else if (parsedAmount > totalAmount) {
+        } else if (parsedAmount > availableBudget) {
           // Check if budget amount exceeds available funds
           newErrors.amount = `Budget amount exceeds available funds. You have ${formatCurrency(
-            totalAmount
+            availableBudget
           )} available but trying to budget ${formatCurrency(parsedAmount)}.`;
         }
       }
@@ -103,6 +122,9 @@ export function BudgetForm() {
         month: new Date().getMonth() + 1, // Current month (1-12)
         year: new Date().getFullYear(),
       });
+
+      // Update available budget immediately after adding a new budget
+      setAvailableBudget((prev) => prev - parseFloat(formData.amount));
 
       // Reset form
       setFormData({ category: "", amount: "" });
@@ -306,12 +328,14 @@ export function BudgetForm() {
               />
 
               {/* Available Funds Info */}
-              <div className="flex items-center justify-between text-xs bg-blue-50 p-2 rounded border border-blue-200">
-                <span className="text-blue-700">Available for Budget:</span>
-                <span className="font-semibold text-blue-800">
-                  {formatCurrency(totalAmount)}
-                </span>
-              </div>
+              {totalExpenses > 0 && (
+                <div className="flex items-center justify-between text-xs bg-blue-50 p-2 rounded border border-blue-200">
+                  <span className="text-blue-700">Available for Budget:</span>
+                  <span className="font-semibold text-blue-800">
+                    {formatCurrency(availableBudget)}
+                  </span>
+                </div>
+              )}
 
               {errors.amount && (
                 <p className="text-xs text-red-500">{errors.amount}</p>

@@ -37,38 +37,60 @@ export function MonthPicker({
   const currentMonth = currentDate.getMonth();
   const currentYear = currentDate.getFullYear();
 
-  // Generate available years (current year and previous 5 years)
+  // Store the current month and year to prevent unwanted resets
+  const [stableMonth, setStableMonth] = useState(selectedMonth);
+  const [stableYear, setStableYear] = useState(selectedYear);
+
+  // Update stable values when props change from outside
+  useEffect(() => {
+    setStableMonth(selectedMonth);
+    setStableYear(selectedYear);
+  }, [selectedMonth, selectedYear]);
+
+  // Generate available years (current year down to 2010)
   const availableYears = [];
-  for (let i = 0; i < 6; i++) {
+  for (let i = 0; i <= currentYear - 2010; i++) {
     availableYears.push(currentYear - i);
   }
 
   const handlePrevMonth = () => {
-    if (selectedMonth === 0) {
-      onMonthChange(11);
-      onYearChange(selectedYear - 1);
+    if (stableMonth === 0) {
+      const newMonth = 11;
+      const newYear = stableYear - 1;
+      setStableMonth(newMonth);
+      setStableYear(newYear);
+      onMonthChange(newMonth);
+      onYearChange(newYear);
     } else {
-      onMonthChange(selectedMonth - 1);
+      const newMonth = stableMonth - 1;
+      setStableMonth(newMonth);
+      onMonthChange(newMonth);
     }
   };
 
   const handleNextMonth = () => {
-    if (selectedMonth === 11) {
-      onMonthChange(0);
-      onYearChange(selectedYear + 1);
+    if (stableMonth === 11) {
+      const newMonth = 0;
+      const newYear = stableYear + 1;
+      setStableMonth(newMonth);
+      setStableYear(newYear);
+      onMonthChange(newMonth);
+      onYearChange(newYear);
     } else {
-      onMonthChange(selectedMonth + 1);
+      const newMonth = stableMonth + 1;
+      setStableMonth(newMonth);
+      onMonthChange(newMonth);
     }
   };
 
   const isCurrentMonth =
-    selectedMonth === currentMonth && selectedYear === currentYear;
+    stableMonth === currentMonth && stableYear === currentYear;
   const isFutureMonth =
-    selectedYear > currentYear ||
-    (selectedYear === currentYear && selectedMonth > currentMonth);
+    stableYear > currentYear ||
+    (stableYear === currentYear && stableMonth > currentMonth);
 
   return (
-    <div className="inline-flex items-center gap-0.5 sm:gap-1 bg-white border rounded-lg p-0.5 sm:p-1 shadow-sm max-w-fit">
+    <div className="inline-flex items-center gap-0.5 sm:gap-0.5 bg-white border rounded-lg p-0.5 sm:p-0.5 shadow-sm max-w-fit">
       <Button
         variant="ghost"
         size="sm"
@@ -78,16 +100,20 @@ export function MonthPicker({
         <ChevronLeft className="h-3 w-3" />
       </Button>
 
-      <div className="flex items-center gap-1 sm:gap-0.5 px-1">
-        <Calendar className="h-3 w-3 text-gray-500 flex-shrink-0" />
+      <div className="flex items-center gap-1.5 sm:gap-1.5 px-1.5">
+        <Calendar className="h-3.5 w-3.5 text-gray-500 flex-shrink-0" />
         <Select
-          value={selectedMonth.toString()}
-          onValueChange={(value) => onMonthChange(parseInt(value))}
+          value={stableMonth.toString()}
+          onValueChange={(value) => {
+            const newMonth = parseInt(value);
+            setStableMonth(newMonth);
+            onMonthChange(newMonth);
+          }}
         >
-          <SelectTrigger className="border-0 shadow-none h-7 sm:h-6 w-auto min-w-[60px] sm:min-w-[55px] max-w-[60px] sm:max-w-[55px] p-0 focus:ring-0">
+          <SelectTrigger className="border-0 shadow-none h-7 sm:h-6 w-auto min-w-[42px] sm:min-w-[40px] max-w-[45px] sm:max-w-[45px] p-0 focus:ring-0 flex items-center justify-center">
             <SelectValue>
-              <span className="text-sm sm:text-xs font-medium text-gray-700">
-                {months[selectedMonth].slice(0, 3)}
+              <span className="text-sm sm:text-xs font-medium text-gray-700 text-center">
+                {months[stableMonth].slice(0, 3)}
               </span>
             </SelectValue>
           </SelectTrigger>
@@ -101,17 +127,21 @@ export function MonthPicker({
         </Select>
 
         <Select
-          value={selectedYear.toString()}
-          onValueChange={(value) => onYearChange(parseInt(value))}
+          value={stableYear.toString()}
+          onValueChange={(value) => {
+            const newYear = parseInt(value);
+            setStableYear(newYear);
+            onYearChange(newYear);
+          }}
         >
-          <SelectTrigger className="border-0 shadow-none h-7 sm:h-6 w-auto min-w-[50px] sm:min-w-[45px] max-w-[50px] sm:max-w-[45px] p-0 focus:ring-0">
+          <SelectTrigger className="border-0 shadow-none h-7 sm:h-6 w-auto min-w-[48px] sm:min-w-[46px] max-w-[55px] sm:max-w-[55px] p-0 focus:ring-0 flex items-center justify-center">
             <SelectValue>
-              <span className="text-sm sm:text-xs font-medium text-gray-700">
-                {selectedYear}
+              <span className="text-sm sm:text-xs font-medium text-gray-700 text-center">
+                {stableYear}
               </span>
             </SelectValue>
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="max-h-[200px] overflow-y-auto">
             {availableYears.map((year) => (
               <SelectItem key={year} value={year.toString()}>
                 {year}
