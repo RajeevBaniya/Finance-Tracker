@@ -78,12 +78,3 @@ server/
    # Production
    npm start
    ```
-
-```
-
-
-
-
-
-
-```

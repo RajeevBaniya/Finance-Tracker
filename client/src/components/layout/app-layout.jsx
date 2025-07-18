@@ -273,7 +273,7 @@ const SignInPage = memo(function SignInPage() {
 
           {/* Right side - Sign In (2/5 width) - Only visible on desktop */}
           <div className="hidden lg:block lg:col-span-2">
-            <div className="bg-white p-8 rounded-2xl shadow-2xl space-y-6 border border-gray-200 backdrop-blur-lg relative">
+            <div className="bg-gray-300 p-8 rounded-2xl shadow-2xl space-y-6 border border-gray-200 backdrop-blur-lg relative">
               {/* Decorative elements */}
               <div className="absolute -top-6 -right-6 w-12 h-12 bg-finance-primary/10 rounded-full"></div>
               <div className="absolute -bottom-4 -left-4 w-8 h-8 bg-finance-success/10 rounded-full"></div>
@@ -299,9 +299,9 @@ const SignInPage = memo(function SignInPage() {
                   <div className="absolute inset-0 flex items-center">
                     <span className="w-full border-t border-finance-border/30" />
                   </div>
-                  <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-white px-2 text-gray-600">
-                      New to FinTrack?
+                  <div className="relative flex justify-center text-xs font-bold">
+                    <span className="bg-gray-300 px-2 text-gray-600">
+                      New to FinTrack ?
                     </span>
                   </div>
                 </div>
