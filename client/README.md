@@ -1,6 +1,6 @@
 # FinanceTracker Client
 
-A Next.js application for personal finance management with transaction tracking, budgeting, and financial insights.
+A Next.js application for personal finance management with transaction tracking, budgeting and financial insights.
 
 ## 🚀 Quick Start
 
@@ -22,6 +22,15 @@ client/src/
 ├── lib/                   # Utilities and API clients
 └── config/                # Configuration files
 ```
+
+## 🔄 Understanding the Data Flow
+
+### How Data Moves Through the App
+
+```
+1. Server API → 2. API Client → 3. Data Hook → 4. Context → 5. Components
+```
+
 
 ## 🏗️ Key Concepts
 
@@ -72,8 +81,6 @@ The app automatically handles month transitions:
 ✅ Filters records by month + currency
 ✅ Provides calculated totals
 
-// How to use:
-const { records, totalIncome, selectedMonth } = useFinancial();
 ```
 
 **budget-context.jsx**
@@ -87,8 +94,6 @@ const { records, totalIncome, selectedMonth } = useFinancial();
 // Dependencies:
 ❗ Requires Financial Context for transaction data
 
-// How to use:
-const { budgets, budgetComparison } = useBudget();
 ```
 
 ### Hooks (`/hooks`)
@@ -132,3 +137,62 @@ const { budgets, budgetComparison } = useBudget();
 2. **Update context** in `budget-context.jsx` if needed
 3. **Create component** in `budgets/` folder
 4. **Use the data** via `useBudget()` hook
+
+### Debugging Data Issues
+
+**Check these in order:**
+
+1. **Server API** - Is data being returned?
+2. **API Client** - Check network tab for API calls
+3. **Data Hook** - Check `allRecords` in React DevTools
+4. **Context** - Check filtered `records` and calculations
+5. **Component** - Check what data the component receives
+
+
+
+## 🎯 Best Practices
+
+### Do ✅
+
+- Use existing contexts via hooks (`useFinancial`, `useBudget`)
+- Add filtering logic to `/lib/filters.js`
+- Follow the established data flow pattern
+- Add documentation for complex logic
+
+### Don't ❌
+
+- Fetch data directly in components
+- Duplicate filtering logic across files
+- Mix UI logic with business logic
+- Create new contexts without clear need
+
+## 🐛 Troubleshooting
+
+### Data Not Updating
+
+1. Check if month/currency filters are applied correctly
+2. Verify the context provides the expected data structure
+3. Check React DevTools for context values
+
+### Performance Issues
+
+1. Check for unnecessary re-renders in React DevTools
+2. Verify memoization is working in contexts
+3. Look for expensive calculations in render loops
+
+### Month Filtering Not Working
+
+1. Verify `selectedMonth` and `selectedYear` in Financial Context
+2. Check if component is using month-filtered `records`
+3. Ensure date comparisons use consistent formats (0-11 for months)
+
+## 🔗 Key Dependencies
+
+- **Next.js 14** - React framework with App Router
+- **Clerk** - Authentication and user management
+- **Recharts** - Data visualization components
+- **Tailwind CSS** - Utility-first styling
+
+---
+
+
