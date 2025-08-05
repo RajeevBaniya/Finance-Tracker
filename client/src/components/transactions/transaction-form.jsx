@@ -24,10 +24,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus, Loader2 } from "lucide-react";
+import { Plus, Loader2, AlertCircle } from "lucide-react";
 
 export function TransactionForm() {
-  const { addRecord, selectedCurrency } = useFinancial(); // Get global currency
+  const { 
+    addRecord, 
+    selectedCurrency, 
+    totalIncome, 
+    totalExpenses, 
+    formatCurrency 
+  } = useFinancial();
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
 
@@ -42,16 +48,8 @@ export function TransactionForm() {
     toAccount: "",
   });
 
-  // Removed useEffect that was syncing with selectedCurrency
-
-  // Handle input changes
-  const handleInputChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-    // Clear error when user starts typing
-    if (errors[field]) {
-      setErrors((prev) => ({ ...prev, [field]: null }));
-    }
-  };
+  // Calculate available balance (deposits - expenses)
+  const availableBalance = totalIncome - totalExpenses;
 
   // Validate form
   const validateForm = () => {
@@ -78,6 +76,16 @@ export function TransactionForm() {
         } else if (parsedAmount > 999999999) {
           newErrors.amount = "Amount is too large";
         }
+
+        // Financial validation for expenses
+        if (formData.transactionType === "expense") {
+          // Check if user has any deposits
+          if (totalIncome <= 0) {
+            newErrors.transactionType = "You must add deposits before adding expenses";
+          } else if (parsedAmount > availableBalance) {
+            newErrors.amount = `Insufficient funds. Available balance: ${formatCurrency(availableBalance)}`;
+          }
+        }
       }
     }
 
@@ -99,6 +107,15 @@ export function TransactionForm() {
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
+  };
+
+  // Handle input changes
+  const handleInputChange = (field, value) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+    // Clear error when user starts typing
+    if (errors[field]) {
+      setErrors((prev) => ({ ...prev, [field]: null }));
+    }
   };
 
   // Handle form submission
@@ -158,6 +175,22 @@ export function TransactionForm() {
         </CardDescription>
       </CardHeader>
       <CardContent>
+        {/* Financial Status Display */}
+        <div className="mb-4 p-3 bg-gray-50 rounded-lg border">
+          <div className="flex items-center gap-2 mb-2">
+            <AlertCircle className="h-4 w-4 text-blue-600" />
+            <span className="text-sm font-medium text-gray-700">Financial Status</span>
+          </div>
+          <div className="text-xs">
+            <div>
+              <span className="text-gray-600">Net Savings:</span>
+              <span className={`ml-1 font-medium ${availableBalance >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                {formatCurrency(availableBalance)}
+              </span>
+            </div>
+          </div>
+        </div>
+
         <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
           {/* Description */}
           <div className="space-y-2">
