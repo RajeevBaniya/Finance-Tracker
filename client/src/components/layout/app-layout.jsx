@@ -156,7 +156,10 @@ const SignInPage = memo(function SignInPage() {
               <div className="flex justify-center mb-2">
                 <Sparkles className="h-8 w-8 text-finance-primary" />
               </div>
-              <h2 className="text-3xl font-bold text-black">Welcome Back</h2>
+              <h2 className="text-3xl font-bold">
+                <span className="text-black">Welcome to </span>
+                <span className="bg-gradient-blue-purple bg-clip-text text-transparent">Fintrack</span>
+              </h2>
               <p className="text-gray-600">
                 Sign in to continue managing your finances
               </p>
@@ -282,7 +285,10 @@ const SignInPage = memo(function SignInPage() {
                 <div className="flex justify-center mb-2">
                   <Sparkles className="h-8 w-8 text-finance-primary" />
                 </div>
-                <h2 className="text-3xl font-bold text-black">Welcome Back</h2>
+                <h2 className="text-3xl font-bold">
+                  <span className="text-black">Welcome to </span>
+                  <span className="bg-gradient-blue-purple bg-clip-text text-transparent">Fintrack</span>
+                </h2>
                 <p className="text-gray-600">
                   Sign in to continue managing your finances
                 </p>
