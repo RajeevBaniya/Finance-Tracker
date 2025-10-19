@@ -24,7 +24,7 @@ import {
 import { PlusCircle } from "lucide-react";
 
 export function BudgetForm() {
-  const { addBudget, availableCategories, budgets } = useBudget();
+  const { addBudget, availableCategories, budgets, budgetComparison } = useBudget();
   const { formatCurrency, allTimeData } = useFinancial();
 
   // Use all-time data for budget validation (budgets should be based on overall available funds)
@@ -38,23 +38,36 @@ export function BudgetForm() {
     amount: "",
   });
 
-  // Calculate available budget by subtracting existing budgets from total amount
+  // Calculate available budget based on both planned budgets and actual spending
   useEffect(() => {
-    // Start with total amount
-    let available = totalAmount;
+    // Start with Total Income as Net Savings
+    let availableFunds = totalIncome;
 
-    // Subtract all current month's budgets
+    // Get current month and year
     const currentMonth = new Date().getMonth() + 1; // 1-12
     const currentYear = new Date().getFullYear();
 
+    // Process each budget category
     budgets.forEach((budget) => {
       if (budget.month === currentMonth && budget.year === currentYear) {
-        available -= budget.amount;
+        // Find actual spending for this category
+        const categorySpending = budgetComparison.find(
+          (comp) => comp.category === budget.category
+        );
+
+        if (categorySpending && categorySpending.spent > 0) {
+          // Subtract actual spending (whether it exceeds budget or not)
+          availableFunds -= categorySpending.spent;
+        } else {
+          // No spending yet, subtract the planned budget amount
+          availableFunds -= budget.amount;
+        }
       }
     });
 
-    setAvailableBudget(available);
-  }, [totalAmount, budgets]);
+    // Available budget reflects both planned allocations and actual spending
+    setAvailableBudget(availableFunds);
+  }, [totalIncome, budgets, budgetComparison]);
 
   // Validate form
   const validateForm = () => {
@@ -123,8 +136,7 @@ export function BudgetForm() {
         year: new Date().getFullYear(),
       });
 
-      // Update available budget immediately after adding a new budget
-      setAvailableBudget((prev) => prev - parseFloat(formData.amount));
+      // No need to update available budget as it's now tied directly to totalAmount
 
       // Reset form
       setFormData({ category: "", amount: "" });
@@ -327,15 +339,13 @@ export function BudgetForm() {
                 className={`h-10 ${errors.amount ? "border-red-500" : ""}`}
               />
 
-              {/* Available Funds Info */}
-              {totalExpenses > 0 && (
-                <div className="flex items-center justify-between text-xs bg-blue-50 p-2 rounded border border-blue-200">
-                  <span className="text-blue-700">Available for Budget:</span>
-                  <span className="font-semibold text-blue-800">
-                    {formatCurrency(availableBudget)}
-                  </span>
-                </div>
-              )}
+              {/* Available Funds Info - Always show this */}
+              <div className="flex items-center justify-between text-xs bg-blue-50 p-2 rounded border border-blue-200">
+                <span className="text-blue-700">Available for Budget:</span>
+                <span className="font-semibold text-blue-800">
+                  {formatCurrency(availableBudget)}
+                </span>
+              </div>
 
               {errors.amount && (
                 <p className="text-xs text-red-500">{errors.amount}</p>

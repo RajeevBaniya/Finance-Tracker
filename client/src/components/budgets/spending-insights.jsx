@@ -112,7 +112,10 @@ export function SpendingInsights({ selectedCategory }) {
         (sum, b) => sum + (b.spent || 0),
         0
       );
-      const budgetRemaining = totalBudget - totalSpent;
+      // Calculate actual remaining for internal use
+      const actualRemaining = totalBudget - totalSpent;
+      // Ensure budget remaining is never negative for display
+      const budgetRemaining = actualRemaining > 0 ? actualRemaining : 0;
       const categoriesOverBudget = filteredBudgetComparison.filter(
         (b) => b.spent > b.budgeted
       ).length;
@@ -120,6 +123,7 @@ export function SpendingInsights({ selectedCategory }) {
         totalBudget,
         totalSpent,
         budgetRemaining,
+        actualRemaining,
         categoriesOverBudget,
       };
     }
@@ -261,7 +265,7 @@ export function SpendingInsights({ selectedCategory }) {
             {budgetUtilization > 100 && (
               <div className="mt-2 text-xs text-red-600">
                 Over budget by{" "}
-                {formatCurrency(Math.abs(insights.budgetRemaining))}
+                {formatCurrency(Math.abs(insights.actualRemaining || 0))}
               </div>
             )}
           </div>

@@ -123,7 +123,9 @@ export const calculateBudgetComparison = (
       const category = budget.category;
       const budgeted = budget.amount || 0;
       const spent = spendingByCategory.get(category) || 0;
-      const remaining = budgeted - spent;
+      // Ensure remaining is never negative - show 0 if budget is exceeded
+      const actualRemaining = budgeted - spent;
+      const remaining = actualRemaining > 0 ? actualRemaining : 0;
       const percentage = budgeted > 0 ? (spent / budgeted) * 100 : 0;
 
       let status = "good";
@@ -174,7 +176,10 @@ export const calculateSpendingInsights = (
     (sum, item) => sum + item.spent,
     0
   );
-  const budgetRemaining = totalBudget - totalSpent;
+  // Calculate actual remaining for internal use
+  const actualRemaining = totalBudget - totalSpent;
+  // Ensure budget remaining is never negative for display
+  const budgetRemaining = actualRemaining > 0 ? actualRemaining : 0;
   const categoriesOverBudget = filteredComparison.filter(
     (item) => item.status === "over"
   ).length;
@@ -183,6 +188,8 @@ export const calculateSpendingInsights = (
     totalBudget,
     totalSpent,
     budgetRemaining,
+    // Store the actual remaining value for calculations if needed
+    actualRemaining,
     categoriesOverBudget,
     budgetUtilization: totalBudget > 0 ? (totalSpent / totalBudget) * 100 : 0,
   };
