@@ -1,6 +1,6 @@
 # FinanceTracker Architecture Documentation
 
-## 📊 Data Flow Overview
+## Data Flow Overview
 
 ### Financial Data Flow
 
@@ -34,7 +34,7 @@ Hook (use-budget-calculations.js) - Computes budget vs actual, insights
 Components (budget-form, budget-list, budget-comparison-chart) - Display & interaction
 ```
 
-## 🏗️ Current Architecture
+## Current Architecture
 
 ### Server Side (`/server`)
 
@@ -84,7 +84,7 @@ client/src/
     └── stages.js          # Configuration constants
 ```
 
-## 🔄 State Management Flow
+## State Management Flow
 
 ### Financial Context Responsibilities
 
@@ -102,7 +102,7 @@ client/src/
 - **Financial Dependency**: Consumes financial context for transaction data
 - **Budget Analysis**: Coordinates budget vs actual calculations
 
-## 🗃️ Database Schema
+##  Database Schema
 
 ### Financial Records
 
@@ -139,7 +139,7 @@ client/src/
 }
 ```
 
-## 🔌 API Endpoints
+## API Endpoints
 
 ### Financial Records API
 
@@ -155,7 +155,7 @@ client/src/
 - `PUT /budgets/:id` - Update budget
 - `DELETE /budgets/:id` - Delete budget
 
-## 🎯 Key Features
+## Key Features
 
 ### Month-wise Data Filtering
 
@@ -174,3 +174,38 @@ client/src/
 - Budget vs actual spending comparison
 - Available funds validation for budget creation
 - Budget insights and spending analysis
+
+## Budget Calculation Logic
+
+### Available Budget Calculation
+
+The system uses a dynamic calculation that balances planned budgets with actual spending:
+
+```javascript
+// Start with Total Income as base
+let availableFunds = totalIncome;
+
+// Process each budget category
+budgets.forEach((budget) => {
+  const categorySpending = budgetComparison.find(
+    (comp) => comp.category === budget.category
+  );
+
+  if (categorySpending && categorySpending.spent > 0) {
+    // Subtract actual spending (includes overspending)
+    availableFunds -= categorySpending.spent;
+  } else {
+    // No spending yet, subtract planned budget amount
+    availableFunds -= budget.amount;
+  }
+});
+```
+
+### Key Principles
+
+1. **Planned Budgets**: Immediately reduce available funds when set
+2. **Actual Spending**: Replaces planned amounts when transactions occur
+3. **Overspending**: Automatically reduces available funds further
+4. **Real-time Updates**: Available budget updates dynamically
+5. **No Double Counting**: Uses either planned amount OR actual spending, not both
+
