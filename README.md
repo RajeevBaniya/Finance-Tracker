@@ -2,11 +2,11 @@
 
 A modern full-stack personal finance management application that helps users track their expenses, manage budgets, and gain insights into their spending patterns.
 
-## 🚀 Live Demo
+##  Live Demo
 
 - **Live**: Demo [FinTrack](https://finance-tracker-apps.vercel.app/)
 
-## 🏗️ Architecture
+##  Architecture
 
 - **Frontend**: Next.js 15 with React 19, TailwindCSS, and Shadcn/ui
 - **Backend**: Node.js with Express and MongoDB
@@ -16,38 +16,38 @@ A modern full-stack personal finance management application that helps users tra
 
 ## Features
 
-- 📊 Budget Management
+-  Budget Management
 
   - Create and manage monthly budgets
   - Track spending against budget limits
   - Visual budget comparison charts
   - Spending insights and analytics
 
-- 💰 Transaction Tracking
+-  Transaction Tracking
 
   - Record income and expenses
   - Categorize transactions
   - View transaction history
   - Monthly spending analysis
 
-- 📈 Data Visualization
+-  Data Visualization
 
   - Monthly spending bar charts
   - Category-wise expense breakdown
   - Budget vs actual comparison charts
 
-- 🔐 User Authentication
+-  User Authentication
 
   - Secure sign-up and sign-in with Clerk
   - Protected routes and API endpoints
   - Multi-currency support
 
-- 🌟 Modern UI
+-  Modern UI
   - Responsive design with TailwindCSS
   - Clean, intuitive interface
   - Real-time data updates
 
-## 🚀 Quick Start
+##  Quick Start
 
 ### Prerequisites
 
@@ -84,7 +84,7 @@ A modern full-stack personal finance management application that helps users tra
    npm run dev
    ```
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 ### Frontend
 
