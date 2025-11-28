@@ -1,6 +1,6 @@
 import { SignUp } from "@clerk/nextjs";
 
-export default function SignUpPage() {
+function SignUpPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-finance-cardBg">
       <div className="w-full max-w-md">
@@ -29,3 +29,5 @@ export default function SignUpPage() {
     </div>
   );
 }
+
+export default SignUpPage;
