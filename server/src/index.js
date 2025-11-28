@@ -29,10 +29,29 @@ app.use(express.json());
 
 const mongoURI = process.env.MONGODB_URI || "";
 
-mongoose
-  .connect(mongoURI)
-  .then(() => console.log("Connected to MongoDB"))
-  .catch((err) => console.error("Failed to Connect to MongoDB:", err));
+// Validate MongoDB URI
+if (!mongoURI || mongoURI === "" || mongoURI === "yourmongodburi") {
+  console.error("❌ ERROR: MONGODB_URI is not configured properly in .env file");
+  console.log("📝 Please set a valid MongoDB connection string in server/.env");
+  console.log("   Example: MONGODB_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/fintrack");
+  console.log("   Or use local: MONGODB_URI=mongodb://localhost:27017/fintrack");
+} else {
+  // Connect to MongoDB
+  mongoose
+    .connect(mongoURI)
+    .then(() => {
+      console.log("✅ Connected to MongoDB successfully");
+    })
+    .catch((err) => {
+      console.error("❌ Failed to Connect to MongoDB:");
+      console.error("   Error:", err.message);
+      console.log("\n💡 Common fixes:");
+      console.log("   1. Check if MONGODB_URI in .env is correct");
+      console.log("   2. Ensure MongoDB cluster is running (not paused)");
+      console.log("   3. Check network connection");
+      console.log("   4. Verify database user credentials");
+    });
+}
 
 // Apply authentication middleware to all routes
 app.use(
