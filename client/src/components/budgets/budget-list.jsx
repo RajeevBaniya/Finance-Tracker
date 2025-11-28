@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { useBudget } from "@/features/budget";
-import { useFinancial } from "@/features/financial";
+import { useBudget } from "@/features/budget/context/budget-context";
+import { useFinancial } from "@/features/financial/context/financial-context";
 import { TRANSACTION_CATEGORIES } from "@/config/stages";
 import { Button } from "@/components/ui/button";
 import {

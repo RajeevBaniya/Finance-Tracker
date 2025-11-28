@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import { useBudget } from "@/features/budget";
-import { useFinancial } from "@/features/financial";
+import { useBudget } from "@/features/budget/context/budget-context";
+import { useFinancial } from "@/features/financial/context/financial-context";
 import {
   Card,
   CardContent,
