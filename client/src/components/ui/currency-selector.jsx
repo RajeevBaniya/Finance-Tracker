@@ -8,7 +8,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { CURRENCIES } from "@/config/stages";
-import { useFinancial } from "@/features/financial";
+import { useFinancial } from "@/features/financial/context/financial-context";
 
 export function CurrencySelector() {
   const { selectedCurrency, setSelectedCurrency } = useFinancial();

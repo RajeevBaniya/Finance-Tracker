@@ -16,7 +16,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useFinancial } from "@/features/financial";
+import { useFinancial } from "@/features/financial/context/financial-context";
 import { TRANSACTION_CATEGORIES } from "@/config/stages";
 
 // Custom tooltip for the pie chart
