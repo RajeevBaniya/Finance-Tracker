@@ -102,4 +102,3 @@ A modern full-stack personal finance management application that helps users tra
 - **Framework**: Express.js
 - **Database**: MongoDB with Mongoose
 - **Authentication**: Clerk
-- **Validation**: Built-in middleware
