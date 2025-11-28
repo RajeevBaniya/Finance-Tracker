@@ -3,7 +3,7 @@
 import { TransactionList } from "@/components/transactions/transaction-list";
 import { CategoryChart } from "@/components/charts/category-chart";
 import { MonthlyBarChart } from "@/components/charts/monthly-bar-chart";
-import { useFinancial } from "@/features/financial";
+import { useFinancial } from "@/features/financial/context/financial-context";
 import { CurrencySelector } from "@/components/ui/currency-selector";
 import { MonthPicker } from "@/components/ui/month-picker";
 import {
@@ -22,7 +22,7 @@ import {
   Activity,
 } from "lucide-react";
 
-export default function Dashboard() {
+function Dashboard() {
   const {
     totalAmount,
     records,
@@ -211,3 +211,5 @@ export default function Dashboard() {
     </div>
   );
 }
+
+export default Dashboard;

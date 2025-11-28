@@ -4,9 +4,9 @@ import { TransactionForm } from "@/components/transactions/transaction-form";
 import { TransactionList } from "@/components/transactions/transaction-list";
 import { CurrencySelector } from "@/components/ui/currency-selector";
 import { MonthPicker } from "@/components/ui/month-picker";
-import { useFinancial } from "@/features/financial";
+import { useFinancial } from "@/features/financial/context/financial-context";
 
-export default function TransactionsPage() {
+function TransactionsPage() {
   const { selectedMonth, selectedYear, setSelectedMonth, setSelectedYear } =
     useFinancial();
 
@@ -58,3 +58,5 @@ export default function TransactionsPage() {
     </div>
   );
 }
+
+export default TransactionsPage;

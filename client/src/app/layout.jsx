@@ -12,7 +12,7 @@ export const metadata = {
   description: "Track your personal finances with ease",
 };
 
-export default function RootLayout({ children }) {
+function RootLayout({ children }) {
   return (
     <html lang="en" className="h-full bg-finance-cardBg">
       <body className={`${inter.className} h-full`}>
@@ -31,3 +31,5 @@ export default function RootLayout({ children }) {
     </html>
   );
 }
+
+export default RootLayout;

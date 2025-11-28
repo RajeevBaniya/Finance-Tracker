@@ -6,10 +6,10 @@ import { BudgetComparisonChart } from "@/components/budgets/budget-comparison-ch
 import { SpendingInsights } from "@/components/budgets/spending-insights";
 import { CurrencySelector } from "@/components/ui/currency-selector";
 import { MonthPicker } from "@/components/ui/month-picker";
-import { useFinancial } from "@/features/financial";
+import { useFinancial } from "@/features/financial/context/financial-context";
 import { useState } from "react";
 
-export default function BudgetsPage() {
+function BudgetsPage() {
   const [selectedCategory, setSelectedCategory] = useState("");
   const { selectedMonth, selectedYear, setSelectedMonth, setSelectedYear } =
     useFinancial();
@@ -60,3 +60,5 @@ export default function BudgetsPage() {
     </div>
   );
 }
+
+export default BudgetsPage;
