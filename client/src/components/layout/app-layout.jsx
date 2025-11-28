@@ -2,8 +2,8 @@
 
 import { UserButton, SignInButton, useUser } from "@clerk/nextjs";
 import { Sidebar, MobileMenuButton } from "./sidebar";
-import { FinancialProvider } from "@/features/financial";
-import { BudgetProvider } from "@/features/budget";
+import { FinancialProvider } from "@/features/financial/context/financial-context";
+import { BudgetProvider } from "@/features/budget/context/budget-context";
 import { UserProvider } from "@/context/user-context.jsx";
 import { clearTokenCache } from "@/lib/api/api-client";
 import { useEffect, Suspense, memo, useState } from "react";
