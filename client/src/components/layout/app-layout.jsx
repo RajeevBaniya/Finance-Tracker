@@ -170,7 +170,7 @@ const SignInPage = memo(function SignInPage() {
               />
               <FeatureCard 
                 icon={<Globe className="h-5 w-5" />}
-                title="Multi-Currency"
+                title="Multi-Currency - 2"
                 description="Support for global transactions"
               />
             </div>
