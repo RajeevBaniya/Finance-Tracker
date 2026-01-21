@@ -1,9 +1,9 @@
 
 module.exports = {
   content: [
-    "./src/pages*.{js,ts,jsx,tsx,mdx}",
-    "./src/components*.{js,ts,jsx,tsx,mdx}",
-    "./src/app*.{js,ts,jsx,tsx,mdx}",
+    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
     extend: {
@@ -11,24 +11,23 @@ module.exports = {
         xs: "480px",
       },
       colors: {
-
         finance: {
-          dark: "#1A2B42", // Primary Background Blue
-          primary: "#3B7DF1", // Accent/Button Blue
+          dark: "#1A2B42",
+          primary: "#3B7DF1",
           accentBlue: "#3B7DF1",
-          light: "#F8F8F8", // Text/Icon Color (White/Light Off-White)
-          secondary: "#A9B4C2", // Secondary Text/Subtle Elements
-          surface: "#0F172A", // Card/Component Background (lighter than dark)
-          card: "#e4eaf0", // New card background
-          border: "#3D4F66", // Border Color (between surface and secondary)
-          hover: "#4A8BF2", // Hover state for primary buttons
-          success: "#10B981", // Success/Positive amounts
-          danger: "#EF4444", // Danger/Negative amounts
-          warning: "#F59E0B", // Warning/Neutral states
-          muted: "#C9D1D9", // Improved muted text for dark backgrounds
-          lightText: "#F8F8F8", // Alias for clarity
-          secondaryText: "#A9B4C2", // Alias for clarity
-          cardBg: "#0F172A", // Main background color for body
+          light: "#F8F8F8",
+          secondary: "#A9B4C2",
+          surface: "#0F172A",
+          card: "#e4eaf0",
+          border: "#3D4F66",
+          hover: "#4A8BF2",
+          success: "#10B981",
+          danger: "#EF4444",
+          warning: "#F59E0B",
+          muted: "#C9D1D9",
+          lightText: "#F8F8F8",
+          secondaryText: "#A9B4C2",
+          cardBg: "#0F172A",
         },
       },
       backgroundImage: {
