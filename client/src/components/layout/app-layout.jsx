@@ -23,7 +23,6 @@ import {
 import { PageLoadingSpinner } from "@/components/ui/loading-spinner";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
-// Memoize the main content wrapper to prevent unnecessary re-renders
 const MainContent = memo(function MainContent({ children }) {
   return (
     <main className="py-4 sm:py-6">
@@ -37,14 +36,12 @@ const MainContent = memo(function MainContent({ children }) {
 export function AppLayout({ children }) {
   const { isSignedIn, isLoaded, user } = useUser();
 
-  // Clear token cache when user changes or signs out
   useEffect(() => {
     if (isLoaded && !isSignedIn) {
       clearTokenCache();
     }
   }, [isSignedIn, isLoaded]);
 
-  // Show loading state while Clerk is loading
   if (!isLoaded) {
     return (
       <div className="min-h-screen bg-finance-cardBg flex items-center justify-center">
@@ -53,7 +50,6 @@ export function AppLayout({ children }) {
     );
   }
 
-  // Show sign-in page if user is not authenticated
   if (!isSignedIn) {
     return <SignInPage />;
   }
@@ -65,21 +61,21 @@ export function AppLayout({ children }) {
           <div className="min-h-screen bg-finance-cardBg">
             <Sidebar />
 
-            {/* Main content area */}
+            {}
             <div className="lg:pl-64">
-              {/* Mobile header */}
+              {}
               <div className="sticky top-0 z-40 flex h-14 sm:h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-finance-cardBg px-4 shadow-sm lg:hidden">
                 <MobileMenuButton />
                 <div className="flex-1"></div>
                 <UserButton />
               </div>
 
-              {/* Desktop header with user button */}
+              {}
               <div className="hidden lg:flex lg:items-center lg:justify-end lg:px-6 lg:py-4">
                 <UserButton />
               </div>
 
-              {/* Main content with Suspense boundary */}
+              {}
               <MainContent>{children}</MainContent>
             </div>
           </div>
@@ -92,7 +88,7 @@ export function AppLayout({ children }) {
 const SignInPage = memo(function SignInPage() {
   return (
     <div className="h-screen bg-finance-cardBg flex flex-col relative overflow-hidden">
-      {/* Subtle geometric background pattern */}
+      {}
       <div className="absolute inset-0 opacity-[0.03]">
         <div className="absolute inset-0" style={{
           backgroundImage: `
@@ -103,13 +99,13 @@ const SignInPage = memo(function SignInPage() {
         }}></div>
       </div>
 
-      {/* Animated floating elements */}
+      {}
       <div className="absolute top-20 left-10 w-2 h-2 bg-finance-primary/30 rounded-full animate-float"></div>
       <div className="absolute top-40 right-20 w-3 h-3 bg-finance-primary/20 rounded-full animate-float-delayed"></div>
       <div className="absolute bottom-32 left-1/4 w-2 h-2 bg-finance-primary/25 rounded-full animate-float-slow"></div>
       <div className="absolute top-1/3 right-1/3 w-2 h-2 bg-finance-primary/20 rounded-full animate-float"></div>
 
-      {/* Header */}
+      {}
       <header className="relative z-10 w-full flex justify-between items-center px-6 py-4 sm:px-8 lg:px-12">
         <div className="flex items-center gap-3">
           <div className="relative">
@@ -128,11 +124,11 @@ const SignInPage = memo(function SignInPage() {
         </SignInButton>
       </header>
 
-      {/* Main content */}
+      {}
       <main className="flex-grow flex items-center justify-center px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="w-full max-w-7xl grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           
-          {/* Left side - Hero content */}
+          {}
           <div className="space-y-6 lg:space-y-8">
             <div className="space-y-4">
               <div className="inline-block">
@@ -151,7 +147,7 @@ const SignInPage = memo(function SignInPage() {
               </p>
             </div>
 
-            {/* Feature grid */}
+            {}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <FeatureCard 
                 icon={<Calculator className="h-5 w-5" />}
@@ -176,14 +172,14 @@ const SignInPage = memo(function SignInPage() {
             </div>
           </div>
 
-          {/* Right side - Auth card */}
+          {}
           <div className="hidden lg:flex justify-center lg:justify-end">
             <div className="w-full max-w-md">
               <div className="bg-white/[0.03] backdrop-blur-xl p-8 rounded-2xl border border-white/10 shadow-2xl relative group hover:border-white/20 transition-all duration-500">
-                {/* Subtle glow effect */}
+                {}
                 <div className="absolute inset-0 bg-finance-primary/5 rounded-2xl blur-xl group-hover:bg-finance-primary/10 transition-all duration-500"></div>
                 
-                {/* Corner accents */}
+                {}
                 <div className="absolute top-0 left-0 w-20 h-20 border-t-2 border-l-2 border-finance-primary/30 rounded-tl-2xl"></div>
                 <div className="absolute bottom-0 right-0 w-20 h-20 border-b-2 border-r-2 border-finance-primary/30 rounded-br-2xl"></div>
                 
@@ -223,7 +219,7 @@ const SignInPage = memo(function SignInPage() {
         </div>
       </main>
 
-      {/* Footer */}
+      {}
       <footer className="relative z-10 py-4 px-6 sm:px-8 lg:px-12 border-t border-white/5">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3 text-finance-secondary text-sm">
           <p>FinTrack. Smart finance management.</p>

@@ -55,7 +55,6 @@ export function TransactionList() {
     loading: false,
   });
 
-  // Start editing a record
   const startEdit = (record) => {
     setEditingId(record._id);
     setEditErrors({});
@@ -73,23 +72,20 @@ export function TransactionList() {
     });
   };
 
-  // Cancel editing
   const cancelEdit = () => {
     setEditingId(null);
     setEditForm({});
     setEditErrors({});
   };
 
-  // Save changes
   const saveEdit = async (recordId) => {
     try {
-      // Check if there are any edit errors
+
       if (editErrors.amount) {
         alert("Please fix the errors before saving");
         return;
       }
 
-      // Validate amount before saving
       const cleanAmount = editForm.amount?.trim() || "0";
       const numberRegex = /^-?\d+(\.\d{1,2})?$/;
 
@@ -122,7 +118,6 @@ export function TransactionList() {
     }
   };
 
-  // Show delete confirmation dialog
   const handleDelete = (recordId) => {
     setDeleteDialog({
       isOpen: true,
@@ -131,7 +126,6 @@ export function TransactionList() {
     });
   };
 
-  // Confirm delete
   const confirmDelete = async () => {
     setDeleteDialog((prev) => ({ ...prev, loading: true }));
     try {
@@ -148,7 +142,6 @@ export function TransactionList() {
     }
   };
 
-  // Close delete dialog
   const closeDeleteDialog = () => {
     setDeleteDialog({
       isOpen: false,
@@ -157,7 +150,6 @@ export function TransactionList() {
     });
   };
 
-  // Validate amount in edit form
   const validateAmount = (value) => {
     const cleanAmount = value?.trim() || "";
     const numberRegex = /^-?\d+(\.\d{1,2})?$/;
@@ -182,14 +174,12 @@ export function TransactionList() {
     return null;
   };
 
-  // Handle amount change in edit form
   const handleAmountChange = (value) => {
     setEditForm((prev) => ({ ...prev, amount: value }));
     const error = validateAmount(value);
     setEditErrors((prev) => ({ ...prev, amount: error }));
   };
 
-  // Show loading state only when authentication is not ready
   if (!isReady) {
     return (
       <Card>
@@ -210,7 +200,6 @@ export function TransactionList() {
     );
   }
 
-  // Show loading state for data fetching
   if (loading) {
     return (
       <Card>
@@ -231,7 +220,6 @@ export function TransactionList() {
     );
   }
 
-  // Empty state
   if (!records || records.length === 0) {
     return (
       <Card>
@@ -315,7 +303,7 @@ export function TransactionList() {
                   {records.map((record) => (
                     <TableRow key={record._id}>
                       {editingId === record._id ? (
-                        // Edit mode
+
                         <>
                           <TableCell className="min-w-[150px] px-3">
                             <Input
@@ -460,7 +448,7 @@ export function TransactionList() {
                           </TableCell>
                         </>
                       ) : (
-                        // View mode
+
                         <>
                           <TableCell className="font-medium text-black min-w-[150px] px-3">
                             <div className="truncate text-sm">

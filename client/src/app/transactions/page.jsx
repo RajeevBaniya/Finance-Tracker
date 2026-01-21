@@ -12,13 +12,13 @@ function TransactionsPage() {
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      {/* Header with Month Picker and Currency Selector */}
+      {}
       <div className="flex flex-col sm:flex-col lg:flex-row lg:items-center lg:justify-between gap-3 lg:gap-4">
         <h1 className="text-2xl font-bold text-gray-900 flex-shrink-0">
           Transactions
         </h1>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between lg:justify-end gap-3">
-          {/* MonthPicker: Only visible on lg+ */}
+          {}
           <div className="w-auto sm:w-48 hidden lg:block">
             <MonthPicker
               selectedMonth={selectedMonth}
@@ -33,14 +33,14 @@ function TransactionsPage() {
         </div>
       </div>
 
-      {/* Main Content Layout */}
+      {}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6">
-        {/* Transaction Form - Takes 4 columns on large screens */}
+        {}
         <div className="lg:col-span-4 w-full">
           <TransactionForm />
         </div>
 
-        {/* MonthPicker: Only visible on mobile/tablet, between form and list */}
+        {}
         <div className="block lg:hidden col-span-1 w-full flex justify-end pr-4 mb-2">
           <MonthPicker
             selectedMonth={selectedMonth}
@@ -50,7 +50,7 @@ function TransactionsPage() {
           />
         </div>
 
-        {/* Transaction List - Takes 8 columns on large screens */}
+        {}
         <div className="lg:col-span-8 w-full">
           <TransactionList />
         </div>

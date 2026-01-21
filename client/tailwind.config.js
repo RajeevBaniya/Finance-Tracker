@@ -1,9 +1,9 @@
-/** @type {import('tailwindcss').Config} */
+
 module.exports = {
   content: [
-    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/pages*.{js,ts,jsx,tsx,mdx}",
+    "./src/components*.{js,ts,jsx,tsx,mdx}",
+    "./src/app*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
     extend: {
@@ -11,7 +11,7 @@ module.exports = {
         xs: "480px",
       },
       colors: {
-        // Deep Blue Finance Theme
+
         finance: {
           dark: "#1A2B42", // Primary Background Blue
           primary: "#3B7DF1", // Accent/Button Blue

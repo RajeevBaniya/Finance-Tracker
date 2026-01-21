@@ -27,7 +27,7 @@ export function BudgetForm() {
   const { addBudget, availableCategories, budgets, budgetComparison } = useBudget();
   const { formatCurrency, allTimeData } = useFinancial();
 
-  // Use all-time data for budget validation (budgets should be based on overall available funds)
+
   const { totalAmount, totalIncome, totalExpenses } = allTimeData;
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
@@ -38,45 +38,36 @@ export function BudgetForm() {
     amount: "",
   });
 
-  // Calculate available budget based on both planned budgets and actual spending
+
+
+
+
+
+
+
+
+
+
   useEffect(() => {
-    // Start with Total Income as Net Savings
-    let availableFunds = totalIncome;
 
-    // Get current month and year
-    const currentMonth = new Date().getMonth() + 1; // 1-12
-    const currentYear = new Date().getFullYear();
+    const totalUnspentBudgets = budgetComparison.reduce((sum, comparison) => {
 
-    // Process each budget category
-    budgets.forEach((budget) => {
-      if (budget.month === currentMonth && budget.year === currentYear) {
-        // Find actual spending for this category
-        const categorySpending = budgetComparison.find(
-          (comp) => comp.category === budget.category
-        );
 
-        if (categorySpending && categorySpending.spent > 0) {
-          // Subtract actual spending (whether it exceeds budget or not)
-          availableFunds -= categorySpending.spent;
-        } else {
-          // No spending yet, subtract the planned budget amount
-          availableFunds -= budget.amount;
-        }
-      }
-    });
+      const unspent = Math.max(0, comparison.budgeted - comparison.spent);
+      return sum + unspent;
+    }, 0);
 
-    // Available budget reflects both planned allocations and actual spending
-    setAvailableBudget(availableFunds);
-  }, [totalIncome, budgets, budgetComparison]);
+    const remaining = totalAmount - totalUnspentBudgets;
+    setAvailableBudget(remaining);
+  }, [totalAmount, budgetComparison]);
 
-  // Validate form
   const validateForm = () => {
     const newErrors = {};
 
     if (!formData.category) {
       newErrors.category = "Please select a category";
     } else {
-      // Check for duplicate budget
+
       const currentMonth = new Date().getMonth() + 1;
       const currentYear = new Date().getFullYear();
       const existingBudget = budgets.find(
@@ -92,11 +83,10 @@ export function BudgetForm() {
       }
     }
 
-    // Enhanced amount validation
     if (!formData.amount || formData.amount.trim() === "") {
       newErrors.amount = "Budget amount is required";
     } else {
-      // Check for invalid number formats like +-7000, --500, ++200, abc123
+
       const cleanAmount = formData.amount.trim();
       const numberRegex = /^\d+(\.\d{1,2})?$/; // Only allow positive numbers for budgets
 
@@ -110,7 +100,7 @@ export function BudgetForm() {
         } else if (parsedAmount > 999999999) {
           newErrors.amount = "Budget amount is too large";
         } else if (parsedAmount > availableBudget) {
-          // Check if budget amount exceeds available funds
+
           newErrors.amount = `Budget amount exceeds available funds. You have ${formatCurrency(
             availableBudget
           )} available but trying to budget ${formatCurrency(parsedAmount)}.`;
@@ -136,9 +126,7 @@ export function BudgetForm() {
         year: new Date().getFullYear(),
       });
 
-      // No need to update available budget as it's now tied directly to totalAmount
 
-      // Reset form
       setFormData({ category: "", amount: "" });
       setErrors({});
     } catch (error) {
@@ -150,7 +138,7 @@ export function BudgetForm() {
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    // Clear error when user starts typing
+
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: null }));
     }
@@ -165,7 +153,6 @@ export function BudgetForm() {
     );
   };
 
-  // Check if user has any income before allowing budget creation
   if (!totalIncome || totalIncome <= 0) {
     return (
       <Card>
@@ -196,7 +183,6 @@ export function BudgetForm() {
     );
   }
 
-  // Check if user has available money left for budgeting after expenses
   if (totalAmount <= 0) {
     return (
       <Card>
@@ -339,7 +325,7 @@ export function BudgetForm() {
                 className={`h-10 ${errors.amount ? "border-red-500" : ""}`}
               />
 
-              {/* Available Funds Info - Always show this */}
+              {}
               <div className="flex items-center justify-between text-xs bg-blue-50 p-2 rounded border border-blue-200">
                 <span className="text-blue-700">Available for Budget:</span>
                 <span className="font-semibold text-blue-800">

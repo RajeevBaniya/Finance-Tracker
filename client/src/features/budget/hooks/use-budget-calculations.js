@@ -1,4 +1,3 @@
-// Hook for budget calculations and analytics
 
 import { useMemo } from "react";
 import { dataUtils } from "@/shared/utils/data-utils";
@@ -21,25 +20,21 @@ export function useBudgetCalculations(
       };
     }
 
-    // Filter budgets by selected currency, month, and year
     const currencyBudgets = budgets.filter((budget) => {
-      // Filter by currency
+
       if (budget.currency !== selectedCurrency) return false;
 
-      // Filter by selected month and year
-      // Convert month from 1-12 to 0-11 for comparison with selectedMonth (which is 0-11)
+
       const budgetMonth = (budget.month || new Date().getMonth() + 1) - 1;
       const budgetYear = budget.year || new Date().getFullYear();
 
       return budgetMonth === selectedMonth && budgetYear === selectedYear;
     });
 
-    // Also keep all currency budgets for comparison calculations (unfiltered by month)
     const allCurrencyBudgets = budgets.filter(
       (budget) => budget.currency === selectedCurrency
     );
 
-    // Calculate budget comparison data (use all currency budgets for comparison)
     const budgetComparison = dataUtils.calculateBudgetComparison(
       records,
       allCurrencyBudgets,
@@ -47,7 +42,6 @@ export function useBudgetCalculations(
       selectedYear
     );
 
-    // Calculate spending insights (use all currency budgets for insights)
     const spendingInsights = dataUtils.calculateSpendingInsights(
       records,
       allCurrencyBudgets,
@@ -56,7 +50,6 @@ export function useBudgetCalculations(
       selectedYear
     );
 
-    // Get available categories (categories that don't have budgets yet for current month)
     const availableCategories = TRANSACTION_CATEGORIES.filter(
       (category) =>
         !currencyBudgets.some(

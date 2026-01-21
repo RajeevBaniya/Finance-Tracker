@@ -37,15 +37,13 @@ export function BudgetList() {
     loading: false,
   });
 
-  // Validate edit form
   const validateEdit = (amount, budgetId = null) => {
     const newErrors = {};
 
-    // Enhanced amount validation
     if (!amount || amount.trim() === "") {
       newErrors.amount = "Budget amount is required";
     } else {
-      // Check for invalid number formats like +-7000, --500, ++200, abc123
+
       const cleanAmount = amount.trim();
       const numberRegex = /^\d+(\.\d{1,2})?$/; // Only allow positive numbers for budgets
 
@@ -58,7 +56,7 @@ export function BudgetList() {
         } else if (parsedAmount > 999999999) {
           newErrors.amount = "Budget amount is too large";
         } else if (budgetId) {
-          // For editing: calculate available funds including current budget amount
+
           const currentBudget = budgets.find((b) => b._id === budgetId);
           const currentBudgetAmount = currentBudget ? currentBudget.amount : 0;
           const availableForEdit = totalAmount + currentBudgetAmount;
@@ -78,7 +76,6 @@ export function BudgetList() {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Start editing a budget
   const startEdit = (budget) => {
     setEditingId(budget._id);
     setEditForm({
@@ -87,20 +84,17 @@ export function BudgetList() {
     setEditErrors({});
   };
 
-  // Cancel editing
   const cancelEdit = () => {
     setEditingId(null);
     setEditForm({});
     setEditErrors({});
   };
 
-  // Save changes
   const saveEdit = async (budgetId) => {
     if (!validateEdit(editForm.amount, budgetId)) {
       return;
     }
 
-    // Find the original budget to get category, month, year
     const originalBudget = budgets.find((b) => b._id === budgetId);
 
     try {
@@ -118,7 +112,6 @@ export function BudgetList() {
     }
   };
 
-  // Show delete confirmation dialog
   const handleDelete = (budgetId) => {
     setDeleteDialog({
       isOpen: true,
@@ -127,7 +120,6 @@ export function BudgetList() {
     });
   };
 
-  // Confirm delete
   const confirmDelete = async () => {
     setDeleteDialog((prev) => ({ ...prev, loading: true }));
     try {
@@ -144,7 +136,6 @@ export function BudgetList() {
     }
   };
 
-  // Close delete dialog
   const closeDeleteDialog = () => {
     if (!deleteDialog.loading) {
       setDeleteDialog({
@@ -155,7 +146,6 @@ export function BudgetList() {
     }
   };
 
-  // Get category details
   const getCategoryDetails = (categoryValue) => {
     return (
       TRANSACTION_CATEGORIES.find((cat) => cat.value === categoryValue) || {
@@ -215,7 +205,7 @@ export function BudgetList() {
           </div>
         </CardHeader>
         <CardContent>
-          {/* Desktop Table View */}
+          {}
           <div className="hidden lg:block rounded-md border border-gray-400">
             <Table>
               <TableHeader>
@@ -229,7 +219,7 @@ export function BudgetList() {
               <TableBody>
                 {budgets.map((budget) => (
                   <TableRow key={budget._id}>
-                    {/* Category */}
+                    {}
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <span>{getCategoryDetails(budget.category).icon}</span>
@@ -239,7 +229,7 @@ export function BudgetList() {
                       </div>
                     </TableCell>
 
-                    {/* Budget Amount */}
+                    {}
                     <TableCell>
                       {editingId === budget._id ? (
                         <div className="space-y-1">
@@ -252,7 +242,7 @@ export function BudgetList() {
                                 ...prev,
                                 amount: value,
                               }));
-                              // Real-time validation
+
                               validateEdit(value, budget._id);
                             }}
                             className={`w-full ${
@@ -275,7 +265,7 @@ export function BudgetList() {
                       )}
                     </TableCell>
 
-                    {/* Month/Year */}
+                    {}
                     <TableCell>
                       <span className="text-sm text-black">
                         {budget.month || new Date().getMonth() + 1}/
@@ -283,7 +273,7 @@ export function BudgetList() {
                       </span>
                     </TableCell>
 
-                    {/* Actions */}
+                    {}
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end gap-2">
                         {editingId === budget._id ? (
@@ -331,7 +321,7 @@ export function BudgetList() {
             </Table>
           </div>
 
-          {/* Mobile/Tablet Card View */}
+          {}
           <div className="lg:hidden space-y-4">
             {budgets.map((budget) => (
               <div
@@ -435,7 +425,7 @@ export function BudgetList() {
         </CardContent>
       </Card>
 
-      {/* Delete Confirmation Dialog */}
+      {}
       <ConfirmationDialog
         isOpen={deleteDialog.isOpen}
         onClose={closeDeleteDialog}

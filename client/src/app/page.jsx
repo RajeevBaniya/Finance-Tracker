@@ -37,7 +37,6 @@ function Dashboard() {
     setSelectedYear,
   } = useFinancial();
 
-  // Calculate some dashboard stats
   const totalTransactions = records.length;
   const thisMonthTransactions = records.filter((record) => {
     const recordDate = new Date(record.date);
@@ -47,13 +46,12 @@ function Dashboard() {
     );
   }).length;
 
-  // Calculate savings rate
   const savingsRate =
     totalIncome > 0 ? ((totalIncome - totalExpenses) / totalIncome) * 100 : 0;
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      {/* Header with Month Picker and Currency Selector */}
+      {}
       <div className="flex flex-col sm:flex-col lg:flex-row lg:items-center lg:justify-between gap-3 lg:gap-4">
         <h1 className="text-2xl font-bold text-gray-900 flex-shrink-0">
           Dashboard
@@ -73,7 +71,7 @@ function Dashboard() {
         </div>
       </div>
 
-      {/* Summary Cards - Responsive Grid */}
+      {}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 lg:gap-4">
         <Card className="hover:shadow-md transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 sm:pb-2">
@@ -133,20 +131,20 @@ function Dashboard() {
         </Card>
       </div>
 
-      {/* Charts Grid - Responsive Layout */}
+      {}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-        {/* Category Breakdown Pie Chart */}
+        {}
         <div className="min-h-0">
           <CategoryChart />
         </div>
 
-        {/* Monthly Bar Chart */}
+        {}
         <div className="min-h-0">
           <MonthlyBarChart />
         </div>
       </div>
 
-      {/* Recent Transactions - Mobile Optimized */}
+      {}
       <div>
         <Card>
           <CardHeader>
@@ -158,7 +156,7 @@ function Dashboard() {
                     Your latest financial transactions
                   </CardDescription>
                 </div>
-                {/* Removed CurrencySelector from here for mobile/tablet */}
+                {}
               </div>
             </div>
           </CardHeader>

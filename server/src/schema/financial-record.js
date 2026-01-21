@@ -14,7 +14,6 @@ const financialRecordSchema = new mongoose.Schema({
   toAccount: { type: String, required: false },
 });
 
-// Create indexes for better query performance
 financialRecordSchema.index({ userId: 1 });
 financialRecordSchema.index({ userEmail: 1 });
 

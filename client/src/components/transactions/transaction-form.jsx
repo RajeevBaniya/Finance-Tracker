@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { useFinancial } from "@/features/financial/context/financial-context";
+import { useBudget } from "@/features/budget/context/budget-context";
 import {
   TRANSACTION_CATEGORIES,
   PAYMENT_METHODS,
@@ -24,7 +25,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus, Loader2, AlertCircle } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Plus, Loader2, AlertCircle, AlertTriangle, X } from "lucide-react";
 
 export function TransactionForm() {
   const { 
@@ -34,8 +42,14 @@ export function TransactionForm() {
     totalExpenses, 
     formatCurrency 
   } = useFinancial();
+  const { budgetComparison } = useBudget();
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  const [budgetWarning, setBudgetWarning] = useState({
+    isOpen: false,
+    budgetInfo: null,
+    pendingRecord: null,
+  });
 
   const [formData, setFormData] = useState({
     description: "",
@@ -48,10 +62,8 @@ export function TransactionForm() {
     toAccount: "",
   });
 
-  // Calculate available balance (deposits - expenses)
   const availableBalance = totalIncome - totalExpenses;
 
-  // Validate form
   const validateForm = () => {
     const newErrors = {};
 
@@ -59,11 +71,10 @@ export function TransactionForm() {
       newErrors.description = "Description is required";
     }
 
-    // Enhanced amount validation - only positive numbers allowed
     if (!formData.amount || formData.amount.trim() === "") {
       newErrors.amount = "Amount is required";
     } else {
-      // Only allow positive numbers since we handle the sign automatically
+
       const cleanAmount = formData.amount.trim();
       const numberRegex = /^\d+(\.\d{1,2})?$/; // Only allow positive number formats
 
@@ -77,9 +88,8 @@ export function TransactionForm() {
           newErrors.amount = "Amount is too large";
         }
 
-        // Financial validation for expenses
         if (formData.transactionType === "expense") {
-          // Check if user has any deposits
+
           if (totalIncome <= 0) {
             newErrors.transactionType = "You must add deposits before adding expenses";
           } else if (parsedAmount > availableBalance) {
@@ -109,53 +119,57 @@ export function TransactionForm() {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Handle input changes
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    // Clear error when user starts typing
+
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: null }));
     }
   };
 
-  // Handle form submission
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const checkBudgetExceeded = (category, expenseAmount) => {
 
-    if (!validateForm()) return;
+    const categoryBudget = budgetComparison.find(
+      (budget) => budget.category.toLowerCase() === category.toLowerCase()
+    );
 
+    if (!categoryBudget) {
+      return { exceeded: false, budgetInfo: null };
+    }
+
+    const currentSpent = categoryBudget.spent || 0;
+    const newTotalSpent = currentSpent + expenseAmount;
+
+    if (newTotalSpent > categoryBudget.budgeted) {
+      const overAmount = newTotalSpent - categoryBudget.budgeted;
+      return {
+        exceeded: true,
+        budgetInfo: {
+          category,
+          expenseAmount,
+          overAmount,
+          currentSpent,
+          budgeted: categoryBudget.budgeted,
+          newTotalSpent,
+        },
+      };
+    }
+
+    return { exceeded: false, budgetInfo: null };
+  };
+
+  const addTransactionRecord = async (recordData) => {
     try {
       setLoading(true);
+      await addRecord(recordData);
 
-      // Calculate the final amount based on transaction type
-      let finalAmount = parseFloat(formData.amount);
-      if (formData.transactionType === "expense") {
-        finalAmount = -Math.abs(finalAmount); // Ensure it's negative for expenses
-      } else {
-        finalAmount = Math.abs(finalAmount); // Ensure it's positive for deposits
-      }
-
-      const newRecord = {
-        date: new Date(formData.date).toISOString(),
-        description: formData.description.trim(),
-        amount: finalAmount,
-        category: formData.category,
-        paymentMethod: formData.paymentMethod,
-        currency: selectedCurrency, // Use global currency
-        fromAccount: formData.fromAccount.trim(),
-        toAccount: formData.toAccount.trim(),
-      };
-
-      await addRecord(newRecord);
-
-      // Reset form
       setFormData({
         description: "",
         amount: "",
         date: new Date().toISOString().split("T")[0],
         category: "",
         paymentMethod: "",
-        transactionType: "deposit", // Reset to default transaction type
+        transactionType: "deposit",
         fromAccount: "",
         toAccount: "",
       });
@@ -166,7 +180,61 @@ export function TransactionForm() {
     }
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!validateForm()) return;
+
+    let finalAmount = parseFloat(formData.amount);
+    if (formData.transactionType === "expense") {
+      finalAmount = -Math.abs(finalAmount);
+    } else {
+      finalAmount = Math.abs(finalAmount);
+    }
+
+    const newRecord = {
+      date: new Date(formData.date).toISOString(),
+      description: formData.description.trim(),
+      amount: finalAmount,
+      category: formData.category,
+      paymentMethod: formData.paymentMethod,
+      currency: selectedCurrency,
+      fromAccount: formData.fromAccount.trim(),
+      toAccount: formData.toAccount.trim(),
+    };
+
+    if (formData.transactionType === "expense") {
+      const expenseAmount = Math.abs(finalAmount);
+      const budgetCheck = checkBudgetExceeded(formData.category, expenseAmount);
+
+      if (budgetCheck.exceeded) {
+
+        setBudgetWarning({
+          isOpen: true,
+          budgetInfo: budgetCheck.budgetInfo,
+          pendingRecord: newRecord,
+        });
+        return; // Don't add yet, wait for user confirmation
+      }
+    }
+
+    await addTransactionRecord(newRecord);
+  };
+
+  const handleBudgetWarningConfirm = async () => {
+    if (budgetWarning.pendingRecord) {
+      await addTransactionRecord(budgetWarning.pendingRecord);
+    }
+    setBudgetWarning({ isOpen: false, budgetInfo: null, pendingRecord: null });
+  };
+
+  const handleBudgetWarningCancel = () => {
+    setBudgetWarning({ isOpen: false, budgetInfo: null, pendingRecord: null });
+    setLoading(false);
+  };
+
   return (
+    <>
     <Card className="w-full">
       <CardHeader className="space-y-1">
         <CardTitle className="text-lg sm:text-xl">Add Transaction</CardTitle>
@@ -175,7 +243,7 @@ export function TransactionForm() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        {/* Financial Status Display */}
+        {}
         <div className="mb-4 p-3 bg-gray-50 rounded-lg border">
           <div className="flex items-center gap-2 mb-2">
             <AlertCircle className="h-4 w-4 text-blue-600" />
@@ -192,7 +260,7 @@ export function TransactionForm() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
-          {/* Description */}
+          {}
           <div className="space-y-2">
             <Label
               htmlFor="transaction-description"
@@ -214,7 +282,7 @@ export function TransactionForm() {
             )}
           </div>
 
-          {/* Date */}
+          {}
           <div className="space-y-1.5">
             <Label htmlFor="date" className="text-sm font-medium text-black">
               Date
@@ -231,9 +299,9 @@ export function TransactionForm() {
             )}
           </div>
 
-          {/* Type and Amount - Single Row */}
+          {}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-            {/* Transaction Type */}
+            {}
             <div className="space-y-1.5">
               <Label
                 htmlFor="transactionType"
@@ -272,7 +340,7 @@ export function TransactionForm() {
               )}
             </div>
 
-            {/* Amount */}
+            {}
             <div className="space-y-1.5">
               <Label
                 htmlFor="amount"
@@ -296,9 +364,9 @@ export function TransactionForm() {
             </div>
           </div>
 
-          {/* From and To - Single Row */}
+          {}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-            {/* From */}
+            {}
             <div className="space-y-1.5">
               <Label
                 htmlFor="fromAccount"
@@ -318,7 +386,7 @@ export function TransactionForm() {
               />
             </div>
 
-            {/* To */}
+            {}
             <div className="space-y-1.5">
               <Label
                 htmlFor="toAccount"
@@ -337,7 +405,7 @@ export function TransactionForm() {
             </div>
           </div>
 
-          {/* Category */}
+          {}
           <div className="space-y-1.5">
             <Label
               htmlFor="category"
@@ -372,7 +440,7 @@ export function TransactionForm() {
             )}
           </div>
 
-          {/* Payment Method */}
+          {}
           <div className="space-y-1.5">
             <Label
               htmlFor="paymentMethod"
@@ -411,7 +479,7 @@ export function TransactionForm() {
             )}
           </div>
 
-          {/* Submit Button */}
+          {}
           <Button type="submit" className="w-full mt-4" disabled={loading}>
             {loading ? (
               <>
@@ -428,5 +496,94 @@ export function TransactionForm() {
         </form>
       </CardContent>
     </Card>
+
+    {}
+    {budgetWarning.isOpen && budgetWarning.budgetInfo && (
+      <Dialog isOpen={budgetWarning.isOpen} onClose={handleBudgetWarningCancel}>
+        <DialogHeader>
+          <div className="flex items-center justify-between">
+            <DialogTitle className="text-finance-light flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5 text-yellow-500" />
+              Budget Exceeded Warning
+            </DialogTitle>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleBudgetWarningCancel}
+              className="h-8 w-8 p-0 hover:bg-finance-border text-finance-secondary hover:text-finance-light"
+              disabled={loading}
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+        </DialogHeader>
+
+        <DialogContent>
+          <div className="space-y-4">
+            <p className="text-finance-secondary text-sm">
+              This expense of{" "}
+              <span className="font-semibold text-red-400">
+                {formatCurrency(budgetWarning.budgetInfo.expenseAmount)}
+              </span>{" "}
+              will exceed your{" "}
+              <span className="font-semibold text-finance-light">
+                {budgetWarning.budgetInfo.category}
+              </span>{" "}
+              budget by{" "}
+              <span className="font-semibold text-red-400">
+                {formatCurrency(budgetWarning.budgetInfo.overAmount)}
+              </span>
+              .
+            </p>
+
+            <div className="bg-finance-surface rounded-lg p-3 border border-finance-border space-y-2 text-sm">
+              <div className="flex justify-between">
+                <span className="text-finance-secondary">Current spending:</span>
+                <span className="text-finance-light font-medium">
+                  {formatCurrency(budgetWarning.budgetInfo.currentSpent)}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-finance-secondary">Budget:</span>
+                <span className="text-blue-400 font-medium">
+                  {formatCurrency(budgetWarning.budgetInfo.budgeted)}
+                </span>
+              </div>
+              <div className="flex justify-between border-t border-finance-border pt-2">
+                <span className="text-finance-secondary">After this expense:</span>
+                <span className="text-red-400 font-semibold">
+                  {formatCurrency(budgetWarning.budgetInfo.newTotalSpent)}
+                </span>
+              </div>
+            </div>
+
+            <p className="text-finance-secondary text-sm">
+              Do you want to continue with this transaction?
+            </p>
+          </div>
+        </DialogContent>
+
+        <DialogFooter>
+          <div className="flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2 space-y-2 space-y-reverse sm:space-y-0">
+            <Button
+              variant="outline"
+              onClick={handleBudgetWarningCancel}
+              disabled={loading}
+              className="w-full sm:w-auto"
+            >
+              No, Cancel
+            </Button>
+            <Button
+              onClick={handleBudgetWarningConfirm}
+              disabled={loading}
+              className="w-full sm:w-auto bg-yellow-600 hover:bg-yellow-700 text-white"
+            >
+              {loading ? "Processing..." : "Yes, Continue"}
+            </Button>
+          </div>
+        </DialogFooter>
+      </Dialog>
+    )}
+  </>
   );
 }

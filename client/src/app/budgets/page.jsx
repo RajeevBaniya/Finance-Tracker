@@ -16,7 +16,7 @@ function BudgetsPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header with Month Picker and Currency Selector */}
+      {}
       <div className="flex flex-col sm:flex-col lg:flex-row lg:items-center lg:justify-between gap-3 lg:gap-4">
         <h1 className="text-2xl font-bold text-gray-900 flex-shrink-0">
           Budgets
@@ -36,15 +36,15 @@ function BudgetsPage() {
         </div>
       </div>
 
-      {/* Form and Chart Layout */}
+      {}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-        {/* Budget Form - Left Column */}
+        {}
         <div className="xl:col-span-1 space-y-6">
           <BudgetForm />
           <BudgetList />
         </div>
 
-        {/* Budget Comparison Chart - Right Column */}
+        {}
         <div className="xl:col-span-1">
           <BudgetComparisonChart
             selectedCategory={selectedCategory}
@@ -53,7 +53,7 @@ function BudgetsPage() {
         </div>
       </div>
 
-      {/* Spending Insights - Full Width */}
+      {}
       <div>
         <SpendingInsights selectedCategory={selectedCategory} />
       </div>

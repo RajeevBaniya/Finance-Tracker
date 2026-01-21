@@ -3,7 +3,6 @@ import FinancialRecordModel from "../schema/financial-record.js";
 
 const router = express.Router();
 
-// Get user information from authenticated request
 const getUserInfo = (req) => {
   const userId = req.auth.userId;
 
@@ -13,14 +12,13 @@ const getUserInfo = (req) => {
 
   return {
     userId: userId,
-    // For now, we'll use the userId as a fallback for email and name
-    // These can be enhanced later if needed
+
+
     userEmail: `user-${userId}@example.com`,
     userName: `User ${userId.slice(-8)}`,
   };
 };
 
-// Create a new financial record
 router.post("/", async (req, res) => {
   try {
     const userInfo = getUserInfo(req);
@@ -35,7 +33,6 @@ router.post("/", async (req, res) => {
   }
 });
 
-// Get all financial records for the authenticated user
 router.get("/getAll", async (req, res) => {
   try {
     const records = await FinancialRecordModel.find({
@@ -52,7 +49,6 @@ router.put("/:id", async (req, res) => {
     const id = req.params.id;
     const newRecordBody = req.body;
 
-    // Server-side validation
     if (!newRecordBody.description || newRecordBody.description.trim() === "") {
       return res.status(400).send({ error: "Description is required" });
     }
@@ -75,7 +71,6 @@ router.put("/:id", async (req, res) => {
         .send({ error: "Category and payment method are required" });
     }
 
-    // Update only records that belong to the authenticated user
     const record = await FinancialRecordModel.findOneAndUpdate(
       { _id: id, userId: req.auth.userId },
       newRecordBody,
@@ -98,7 +93,6 @@ router.delete("/:id", async (req, res) => {
   try {
     const id = req.params.id;
 
-    // Delete only records that belong to the authenticated user
     const record = await FinancialRecordModel.findOneAndDelete({
       _id: id,
       userId: req.auth.userId,

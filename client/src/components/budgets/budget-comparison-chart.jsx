@@ -36,16 +36,13 @@ export function BudgetComparisonChart({
   const { budgetComparison, loading } = useBudget();
   const { formatCurrency, allTimeData, totalIncome } = useFinancial();
 
-  // Use all-time data for budget availability warnings
   const { totalAmount } = allTimeData;
 
-  // Filter budget comparison data based on selected category
   const filteredBudgetData =
     budgetComparison?.filter(
       (item) => item.category.toLowerCase() === selectedCategory.toLowerCase()
     ) || [];
 
-  // Custom tooltip
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
@@ -87,7 +84,6 @@ export function BudgetComparisonChart({
     );
   }
 
-  // Check if user has income before showing budget comparison
   if (!totalIncome || totalIncome <= 0) {
     return (
       <Card>
@@ -113,8 +109,7 @@ export function BudgetComparisonChart({
     );
   }
 
-  // Only hide if no existing budgets - users should see comparisons for existing budgets
-  // even if they can't create new ones
+
 
   if (!budgetComparison || budgetComparison.length === 0) {
     return (
@@ -172,7 +167,7 @@ export function BudgetComparisonChart({
         </div>
       </CardHeader>
 
-      {/* Low funds notification when viewing existing budgets */}
+      {}
       {totalAmount <= 0 && budgetComparison && budgetComparison.length > 0 && (
         <div className="mx-6 mb-4 p-3 bg-orange-50 border border-orange-200 rounded-lg">
           <div className="flex items-center gap-2 text-sm">
@@ -254,7 +249,7 @@ export function BudgetComparisonChart({
               </ResponsiveContainer>
             </div>
 
-            {/* Status indicators */}
+            {}
             <div className="mt-4 space-y-2">
               {filteredBudgetData.map((item) => (
                 <div

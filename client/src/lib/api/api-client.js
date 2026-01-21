@@ -1,9 +1,8 @@
-// Base API client for FinTrack
-// Handles generic HTTP requests and error handling with authentication
+
+
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4001";
 
-// Token cache to avoid repeated getToken calls
 let tokenCache = null;
 let tokenPromise = null;
 let tokenExpiry = 0;
@@ -12,19 +11,16 @@ const MAX_RETRIES = 3; // Increased from 2 to 3
 const RETRY_DELAY = 1000; // 1 second
 const TOKEN_EXPIRY_BUFFER = 5 * 60 * 1000; // 5 minutes buffer
 
-// Delay helper function
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-// Create optimized authenticated API request function
 export function createAuthenticatedApiRequest(getToken) {
   const refreshToken = async () => {
     try {
-      // If there's already a token request in progress, wait for it
+
       if (tokenPromise) {
         return await tokenPromise;
       }
 
-      // Clear expired token
       if (tokenCache && Date.now() >= tokenExpiry) {
         tokenCache = null;
         tokenExpiry = 0;
@@ -58,7 +54,6 @@ export function createAuthenticatedApiRequest(getToken) {
     try {
       let authToken = null;
 
-      // Always try to refresh token on first attempt
       if (retryCount === 0 || !tokenCache || Date.now() >= tokenExpiry) {
         authToken = await refreshToken();
       } else {
@@ -82,10 +77,9 @@ export function createAuthenticatedApiRequest(getToken) {
 
       if (!response.ok) {
         if (response.status === 401) {
-          // Clear cached token on auth error
+
           clearTokenCache();
 
-          // Retry with a new token if we haven't exceeded max retries
           if (retryCount < MAX_RETRIES) {
             console.log(`Retrying request (attempt ${retryCount + 1})`);
             await delay(RETRY_DELAY * (retryCount + 1));
@@ -119,7 +113,6 @@ export function createAuthenticatedApiRequest(getToken) {
   };
 }
 
-// Clear token cache (useful for logout)
 export function clearTokenCache() {
   console.log("Clearing token cache");
   tokenCache = null;
@@ -127,12 +120,10 @@ export function clearTokenCache() {
   tokenPromise = null;
 }
 
-// Legacy API request handler (with token caching)
 export async function apiRequest(url, options = {}, retryCount = 0) {
   try {
     let authToken = null;
 
-    // Try to get token from client side with caching
     if (typeof window !== "undefined") {
       const now = Date.now();
       if (tokenCache && now < tokenExpiry) {
@@ -146,7 +137,6 @@ export async function apiRequest(url, options = {}, retryCount = 0) {
             tokenPromise = getToken();
             authToken = await tokenPromise;
 
-            // Cache the token with shorter expiry
             tokenCache = authToken;
             tokenExpiry = now + 4.5 * 60 * 1000; // 4.5 minutes to be safe
             tokenPromise = null;
@@ -164,7 +154,6 @@ export async function apiRequest(url, options = {}, retryCount = 0) {
       ...options.headers,
     };
 
-    // Add authorization header if token exists
     if (authToken) {
       headers.Authorization = `Bearer ${authToken}`;
     }
@@ -175,11 +164,10 @@ export async function apiRequest(url, options = {}, retryCount = 0) {
     });
 
     if (!response.ok) {
-      // Handle authentication errors
+
       if (response.status === 401) {
         clearTokenCache();
 
-        // Retry with a new token if we haven't exceeded max retries
         if (retryCount < MAX_RETRIES) {
           await delay(RETRY_DELAY * (retryCount + 1));
           return apiRequest(url, options, retryCount + 1);
@@ -190,7 +178,6 @@ export async function apiRequest(url, options = {}, retryCount = 0) {
         );
       }
 
-      // Try to parse error message from response
       let errorMessage = `API request failed: ${response.status}`;
       try {
         const errorData = await response.json();
@@ -198,7 +185,7 @@ export async function apiRequest(url, options = {}, retryCount = 0) {
           errorMessage = errorData.error;
         }
       } catch (e) {
-        // If parsing fails, use the default message
+
       }
 
       throw new Error(errorMessage);
@@ -217,5 +204,4 @@ export async function apiRequest(url, options = {}, retryCount = 0) {
   }
 }
 
-// Export the base URL for other modules that might need it
 export { API_BASE_URL };

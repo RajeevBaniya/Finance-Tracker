@@ -24,7 +24,6 @@ import {
 } from "@/components/ui/sheet";
 import { useState } from "react";
 
-// Memoize navigation items to prevent unnecessary re-renders
 const navigationItems = [
   {
     title: "Dashboard",
@@ -46,7 +45,6 @@ const navigationItems = [
   },
 ];
 
-// Optimized navigation link component
 function NavLink({ href, icon: Icon, title, isActive, onClick }) {
   return (
     <Link
@@ -73,7 +71,6 @@ function NavLink({ href, icon: Icon, title, isActive, onClick }) {
   );
 }
 
-// Desktop Sidebar Component
 function DesktopSidebar() {
   const pathname = usePathname();
 
@@ -107,7 +104,6 @@ function DesktopSidebar() {
   );
 }
 
-// Mobile Menu Button (extracted for header use)
 export function MobileMenuButton() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
@@ -175,12 +171,10 @@ export function MobileMenuButton() {
   );
 }
 
-// Mobile Sidebar Component (now simplified)
 function MobileSidebar() {
   return null; // Mobile functionality moved to MobileMenuButton
 }
 
-// Main Layout Component
 export function Sidebar() {
   return (
     <>

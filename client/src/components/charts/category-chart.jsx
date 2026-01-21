@@ -19,7 +19,6 @@ import {
 import { useFinancial } from "@/features/financial/context/financial-context";
 import { TRANSACTION_CATEGORIES } from "@/config/stages";
 
-// Custom tooltip for the pie chart
 const CustomTooltip = ({ active, payload, formatCurrency }) => {
   if (active && payload && payload.length) {
     const data = payload[0];
@@ -44,7 +43,6 @@ const CustomTooltip = ({ active, payload, formatCurrency }) => {
   return null;
 };
 
-// Custom label rendering function for better spacing
 const renderCustomLabel = ({
   cx,
   cy,
@@ -55,13 +53,12 @@ const renderCustomLabel = ({
   payload,
 }) => {
   const RADIAN = Math.PI / 180;
-  // Responsive label distance based on screen size
+
   const labelDistance = outerRadius < 50 ? 8 : outerRadius < 80 ? 15 : 20;
   const radius = outerRadius + labelDistance;
   const x = cx + radius * Math.cos(-midAngle * RADIAN);
   const y = cy + radius * Math.sin(-midAngle * RADIAN);
 
-  // Show percentage threshold based on screen size
   const threshold = outerRadius < 50 ? 0.08 : 0.03;
   if (percent < threshold) return null;
 
@@ -84,7 +81,6 @@ export function CategoryChart() {
   const { categoryData, loading, formatCurrency } = useFinancial();
   const [chartRadius, setChartRadius] = useState(55);
 
-  // Update chart radius based on screen size
   useEffect(() => {
     const updateRadius = () => {
       const width = window.innerWidth;
@@ -143,7 +139,6 @@ export function CategoryChart() {
     );
   }
 
-  // Prepare data for pie chart with colors and percentages
   const totalAmount = categoryData.reduce(
     (sum, item) => sum + Math.abs(item.amount || 0),
     0
@@ -151,7 +146,7 @@ export function CategoryChart() {
 
   const processedData = categoryData
     .map((item) => {
-      // Normalize category for matching with TRANSACTION_CATEGORIES
+
       const normalizedCategory = item.category.toLowerCase().trim();
       const categoryInfo = TRANSACTION_CATEGORIES.find(
         (cat) => cat.value === normalizedCategory
@@ -173,7 +168,6 @@ export function CategoryChart() {
     })
     .sort((a, b) => b.value - a.value); // Sort by amount descending
 
-  // Group very small categories (less than 1%) into "Others" if there are many
   const threshold = 1.0; // 1%
   const mainCategories = processedData.filter(
     (item) => item.percentage >= threshold
@@ -184,7 +178,7 @@ export function CategoryChart() {
 
   let chartData;
   if (smallCategories.length > 3) {
-    // Group small categories into "Others"
+
     const othersTotal = smallCategories.reduce(
       (sum, item) => sum + item.value,
       0
@@ -251,7 +245,7 @@ export function CategoryChart() {
           </ResponsiveContainer>
         </div>
 
-        {/* Category breakdown list */}
+        {}
         <div className="space-y-2">
           {chartData.map((item, index) => (
             <div key={index}>
@@ -279,7 +273,7 @@ export function CategoryChart() {
                 </div>
               </div>
 
-              {/* Show breakdown of "Others" group */}
+              {}
               {item.isOthers && item.smallCategories && (
                 <div className="ml-5 mt-2 space-y-1 border-l-2 border-gray-200 pl-3">
                   {item.smallCategories.map((small, smallIndex) => (

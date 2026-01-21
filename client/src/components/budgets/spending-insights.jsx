@@ -16,7 +16,6 @@ export function SpendingInsights({ selectedCategory }) {
   const { spendingInsights, budgets, loading, budgetComparison } = useBudget();
   const { formatCurrency, allTimeData, totalIncome } = useFinancial();
 
-  // Use all-time data for budget availability warnings
   const { totalAmount } = allTimeData;
 
   if (loading) {
@@ -40,7 +39,6 @@ export function SpendingInsights({ selectedCategory }) {
     );
   }
 
-  // Check if user has income before showing spending insights
   if (!totalIncome || totalIncome <= 0) {
     return (
       <Card>
@@ -68,8 +66,7 @@ export function SpendingInsights({ selectedCategory }) {
     );
   }
 
-  // Only hide if no existing budgets - users should see insights for existing budgets
-  // even if they can't create new ones
+
 
   if (!budgets || budgets.length === 0) {
     return (
@@ -102,7 +99,7 @@ export function SpendingInsights({ selectedCategory }) {
     filteredBudgetComparison = budgetComparison.filter(
       (b) => b.category === selectedCategory
     );
-    // If you have per-category insights, use that; otherwise, recalculate:
+
     if (filteredBudgets.length > 0) {
       const totalBudget = filteredBudgets.reduce(
         (sum, b) => sum + (b.amount || 0),
@@ -112,9 +109,9 @@ export function SpendingInsights({ selectedCategory }) {
         (sum, b) => sum + (b.spent || 0),
         0
       );
-      // Calculate actual remaining for internal use
+
       const actualRemaining = totalBudget - totalSpent;
-      // Ensure budget remaining is never negative for display
+
       const budgetRemaining = actualRemaining > 0 ? actualRemaining : 0;
       const categoriesOverBudget = filteredBudgetComparison.filter(
         (b) => b.spent > b.budgeted
@@ -133,7 +130,6 @@ export function SpendingInsights({ selectedCategory }) {
     month: "long",
   });
 
-  // Calculate budget utilization percentage
   const budgetUtilization =
     insights.totalBudget > 0
       ? (insights.totalSpent / insights.totalBudget) * 100
@@ -151,7 +147,7 @@ export function SpendingInsights({ selectedCategory }) {
         </CardDescription>
       </CardHeader>
 
-      {/* Low funds notification when viewing existing budget insights */}
+      {}
       {totalAmount <= 0 && budgets && budgets.length > 0 && (
         <div className="mx-6 mb-4 p-3 bg-orange-50 border border-orange-200 rounded-lg">
           <div className="flex items-center gap-2 text-sm">
@@ -166,7 +162,7 @@ export function SpendingInsights({ selectedCategory }) {
       )}
 
       <CardContent>
-        {/* Summary Header */}
+        {}
         <div className="mb-4 p-3 bg-gray-50/80 rounded-lg border border-gray-100">
           <h4 className="font-medium text-gray-800 mb-1">
             Monthly Overview
@@ -193,10 +189,10 @@ export function SpendingInsights({ selectedCategory }) {
           </div>
         </div>
 
-        {/* Key Metrics Grid */}
+        {}
         {selectedCategory ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-            {/* Total Spent */}
+            {}
             <div className="bg-red-50 p-4 rounded-lg">
               <div className="flex items-center gap-2 mb-2">
                 <Banknote className="h-4 w-4 text-red-600" />
@@ -212,7 +208,7 @@ export function SpendingInsights({ selectedCategory }) {
               </div>
             </div>
 
-            {/* Budget Remaining */}
+            {}
             <div className="bg-green-50 p-4 rounded-lg">
               <div className="flex items-center gap-2 mb-2">
                 <Target className="h-4 w-4 text-green-600" />
@@ -237,7 +233,7 @@ export function SpendingInsights({ selectedCategory }) {
           </div>
         )}
 
-        {/* Budget Utilization Progress */}
+        {}
         {selectedCategory && (
           <div className="mb-6">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2 gap-1">
@@ -271,7 +267,7 @@ export function SpendingInsights({ selectedCategory }) {
           </div>
         )}
 
-        {/* Alerts and Warnings */}
+        {}
         {selectedCategory && insights.categoriesOverBudget > 0 && (
           <div className="bg-red-50 border border-red-200 rounded-lg p-4">
             <div className="flex items-center gap-2 mb-2">
@@ -284,7 +280,7 @@ export function SpendingInsights({ selectedCategory }) {
           </div>
         )}
 
-        {/* Category Breakdown */}
+        {}
         {filteredBudgetComparison && filteredBudgetComparison.length > 0 && (
           <div className="mb-6">
             <h4 className="font-medium text-black mb-3">
@@ -338,7 +334,7 @@ export function SpendingInsights({ selectedCategory }) {
           </div>
         )}
 
-        {/* Quick Tips */}
+        {}
         {selectedCategory && (
           <div className="mt-6 p-4 bg-gray-50/80 rounded-lg border border-gray-100">
             <h4 className="font-medium text-blue-800 mb-2">💡 Quick Tips</h4>

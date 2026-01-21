@@ -11,7 +11,6 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 4001;
 
-// Configure CORS before other middleware
 app.use(
   cors({
     origin: [
@@ -29,14 +28,13 @@ app.use(express.json());
 
 const mongoURI = process.env.MONGODB_URI || "";
 
-// Validate MongoDB URI
 if (!mongoURI || mongoURI === "" || mongoURI === "yourmongodburi") {
   console.error("❌ ERROR: MONGODB_URI is not configured properly in .env file");
   console.log("📝 Please set a valid MongoDB connection string in server/.env");
   console.log("   Example: MONGODB_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/fintrack");
   console.log("   Or use local: MONGODB_URI=mongodb://localhost:27017/fintrack");
 } else {
-  // Connect to MongoDB
+
   mongoose
     .connect(mongoURI)
     .then(() => {
@@ -53,7 +51,6 @@ if (!mongoURI || mongoURI === "" || mongoURI === "yourmongodburi") {
     });
 }
 
-// Apply authentication middleware to all routes
 app.use(
   "/financial-records",
   requireAuth,
@@ -62,7 +59,6 @@ app.use(
 );
 app.use("/budgets", requireAuth, extractUserId, budgetRouter);
 
-// Health check endpoint for deployment monitoring
 app.get("/health", (req, res) => {
   res.status(200).json({
     status: "OK",
@@ -71,7 +67,6 @@ app.get("/health", (req, res) => {
   });
 });
 
-// Root endpoint
 app.get("/", (req, res) => {
   res.status(200).json({
     message: "FinanceTracker API Server",
@@ -80,7 +75,6 @@ app.get("/", (req, res) => {
   });
 });
 
-// Error handling middleware
 app.use((err, req, res, next) => {
   console.error("Global error handler:", err);
   if (err.name === "UnauthorizedError" || err.status === 401) {

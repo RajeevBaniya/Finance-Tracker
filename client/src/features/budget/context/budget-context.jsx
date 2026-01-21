@@ -1,4 +1,4 @@
-// Budget context: manages budget state and comparisons
+
 "use client";
 
 import { createContext, useContext, useState } from "react";
@@ -13,9 +13,7 @@ export const BudgetProvider = ({ children }) => {
   const { userId, isLoaded } = useAuth();
   const { records, selectedCurrency, selectedMonth, selectedYear } =
     useFinancial();
-  const [selectedCategory, setSelectedCategory] = useState(null);
-
-  // Use custom hooks for budget data and calculations
+  const [selectedCategory, setSelectedCategory] = useState(null);
   const {
     budgets: allBudgets,
     loading,
@@ -39,43 +37,29 @@ export const BudgetProvider = ({ children }) => {
     selectedCategory,
     selectedMonth,
     selectedYear
-  );
-
-  // Enhanced add budget function - use the selected currency from context
-  const addBudget = async (budget) => {
-    // Use the currently selected currency for new budgets
+  );
+  const addBudget = async (budget) => {
     const budgetWithCurrency = { ...budget, currency: selectedCurrency };
     return await addBudgetAPI(budgetWithCurrency);
-  };
-
-  // Show overall loading state when user is not loaded or when budget data is loading
+  };
   const overallLoading = !isLoaded || (isLoaded && userId && loading);
 
-  const contextValue = {
-    // Data
+  const contextValue = {
     budgets: currencyBudgets,
     allBudgets,
     loading: overallLoading,
-    error,
-
-    // Category selection
+    error,
     selectedCategory,
-    setSelectedCategory,
-
-    // Computed values from calculations hook
+    setSelectedCategory,
     budgetComparison,
     spendingInsights,
-    availableCategories,
-
-    // Actions
+    availableCategories,
     addBudget,
     updateBudget: updateBudgetAPI,
     deleteBudget: deleteBudgetAPI,
     fetchBudgets,
     getBudgetForCategory: (category) =>
-      getBudgetForCategory(category, selectedCurrency),
-
-    // Status helpers
+      getBudgetForCategory(category, selectedCurrency),
     isAuthenticated: !!userId,
     isReady: isLoaded,
   };

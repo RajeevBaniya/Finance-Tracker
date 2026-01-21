@@ -1,14 +1,12 @@
-// Shared data utilities for calculations and grouping
+
 
 import { TRANSACTION_CATEGORIES } from "@/config/stages";
 
-// Calculate total amount from an array of records
 export const calculateTotal = (records) => {
   if (!records || !Array.isArray(records)) return 0;
   return records.reduce((total, record) => total + (record.amount || 0), 0);
 };
 
-// Group records by category for chart visualization
 export const groupByCategory = (records) => {
   if (!records || !Array.isArray(records)) return [];
 
@@ -23,7 +21,7 @@ export const groupByCategory = (records) => {
       existing.amount += amount;
       existing.count += 1;
     } else {
-      // Get category details for display
+
       const categoryDetails = getCategoryDetails(category);
 
       categoryMap.set(category, {
@@ -39,7 +37,6 @@ export const groupByCategory = (records) => {
   return Array.from(categoryMap.values());
 };
 
-// Group records by month for monthly trends
 export const groupByMonth = (records) => {
   if (!records || !Array.isArray(records)) return [];
 
@@ -80,7 +77,6 @@ export const groupByMonth = (records) => {
   );
 };
 
-// Calculate budget vs actual comparison
 export const calculateBudgetComparison = (
   records,
   budgets,
@@ -89,7 +85,6 @@ export const calculateBudgetComparison = (
 ) => {
   if (!records || !budgets) return [];
 
-  // Filter records for the selected month/year
   const monthRecords = records.filter((record) => {
     const recordDate = new Date(record.date);
     return (
@@ -98,11 +93,10 @@ export const calculateBudgetComparison = (
     );
   });
 
-  // Calculate spending by category for the month
   const spendingByCategory = new Map();
   monthRecords.forEach((record) => {
     if (record.amount < 0) {
-      // Only expenses
+
       const category = record.category || "Uncategorized";
       const amount = Math.abs(record.amount);
       spendingByCategory.set(
@@ -112,7 +106,6 @@ export const calculateBudgetComparison = (
     }
   });
 
-  // Filter budgets for the selected month/year and calculate comparison
   return budgets
     .filter((budget) => {
       const budgetMonth = (budget.month || new Date().getMonth() + 1) - 1; // Convert to 0-11
@@ -123,7 +116,7 @@ export const calculateBudgetComparison = (
       const category = budget.category;
       const budgeted = budget.amount || 0;
       const spent = spendingByCategory.get(category) || 0;
-      // Ensure remaining is never negative - show 0 if budget is exceeded
+
       const actualRemaining = budgeted - spent;
       const remaining = actualRemaining > 0 ? actualRemaining : 0;
       const percentage = budgeted > 0 ? (spent / budgeted) * 100 : 0;
@@ -146,7 +139,6 @@ export const calculateBudgetComparison = (
     });
 };
 
-// Calculate spending insights and patterns
 export const calculateSpendingInsights = (
   records,
   budgets,
@@ -163,7 +155,6 @@ export const calculateSpendingInsights = (
     selectedYear
   );
 
-  // Filter by category if specified
   const filteredComparison = selectedCategory
     ? comparison.filter((item) => item.category === selectedCategory)
     : comparison;
@@ -176,9 +167,9 @@ export const calculateSpendingInsights = (
     (sum, item) => sum + item.spent,
     0
   );
-  // Calculate actual remaining for internal use
+
   const actualRemaining = totalBudget - totalSpent;
-  // Ensure budget remaining is never negative for display
+
   const budgetRemaining = actualRemaining > 0 ? actualRemaining : 0;
   const categoriesOverBudget = filteredComparison.filter(
     (item) => item.status === "over"
@@ -188,14 +179,13 @@ export const calculateSpendingInsights = (
     totalBudget,
     totalSpent,
     budgetRemaining,
-    // Store the actual remaining value for calculations if needed
+
     actualRemaining,
     categoriesOverBudget,
     budgetUtilization: totalBudget > 0 ? (totalSpent / totalBudget) * 100 : 0,
   };
 };
 
-// Format date for display
 export const formatDate = (dateString) => {
   if (!dateString) return "N/A";
 
@@ -212,7 +202,6 @@ export const formatDate = (dateString) => {
   }
 };
 
-// Get category details (icon, color, etc.)
 export const getCategoryDetails = (categoryValue) => {
   const category = TRANSACTION_CATEGORIES.find(
     (cat) => cat.value.toLowerCase() === categoryValue.toLowerCase()
@@ -228,7 +217,6 @@ export const getCategoryDetails = (categoryValue) => {
   );
 };
 
-// Utility object for easy importing
 export const dataUtils = {
   calculateTotal,
   groupByCategory,

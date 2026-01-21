@@ -12,7 +12,7 @@
 }
 
 @layer components {
-  /* Custom dialog animations */
+  
   .dialog-overlay {
     animation: fadeIn 0.2s ease-out;
     background: rgba(255, 255, 255, 0.3);
@@ -46,7 +46,7 @@
     }
   }
 
-  /* Landing page floating animations */
+  
   @keyframes float {
     0%, 100% {
       transform: translateY(0px) translateX(0px);
@@ -94,7 +94,7 @@
     animation-delay: 2s;
   }
 
-  /* Clerk modal enhancements */
+  
   [data-clerk-element="modalContent"] {
     animation: slideInScale 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   }
@@ -103,7 +103,7 @@
     animation: fadeIn 0.2s ease-out;
   }
 
-  /* Responsive improvements */
+  
   @media (max-width: 640px) {
     .dialog-content {
       width: calc(100vw - 2rem);
@@ -117,7 +117,7 @@
   }
 }
 
-/* Make date input calendar icon black */
+
 input[type="date"]::-webkit-calendar-picker-indicator {
   filter: invert(0);
 }

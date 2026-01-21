@@ -1,4 +1,4 @@
-// Hook for fetching and managing budget records
+
 
 import { useState, useCallback, useEffect, useMemo } from "react";
 import { useAuth } from "@clerk/nextjs";
@@ -9,33 +9,23 @@ export function useBudgetData() {
   const [budgets, setBudgets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [lastFetchTime, setLastFetchTime] = useState(0);
-
-  // Create stable API instance - only recreate when getToken changes
+  const [lastFetchTime, setLastFetchTime] = useState(0);
   const budgetsAPI = useMemo(() => {
     return getToken ? createBudgetsAPI(getToken) : null;
-  }, [getToken]);
-
-  // Fetch all budgets with optimized dependencies
+  }, [getToken]);
   const fetchBudgets = useCallback(
-    async (force = false) => {
-      // Don't fetch if auth is not loaded yet
+    async (force = false) => {
       if (!isLoaded) {
         return;
-      }
-
-      // If no user or API, clear data and set loading to false
+      }
       if (!budgetsAPI || !userId || !isSignedIn) {
         setBudgets([]);
         setLoading(false);
         setError(null);
         return;
-      }
-
-      // Prevent multiple rapid fetches unless forced
+      }
       const now = Date.now();
-      if (!force && now - lastFetchTime < 2000) {
-        // 2 second debounce
+      if (!force && now - lastFetchTime < 2000) {
         return;
       }
 
@@ -47,8 +37,7 @@ export function useBudgetData() {
         setLastFetchTime(now);
       } catch (err) {
         setError(err.message);
-        console.error("Error fetching budgets:", err);
-        // Only clear budgets on auth errors
+        console.error("Error fetching budgets:", err);
         if (err.message.includes("Authentication")) {
           setBudgets([]);
         }
@@ -57,9 +46,7 @@ export function useBudgetData() {
       }
     },
     [budgetsAPI, userId, isLoaded, isSignedIn, lastFetchTime]
-  );
-
-  // Add new budget with retry logic
+  );
   const addBudget = useCallback(
     async (budget) => {
       if (!budgetsAPI || !isSignedIn) {
@@ -71,8 +58,7 @@ export function useBudgetData() {
         const newBudget = await budgetsAPI.create(budget);
         setBudgets((prev) => [...prev, newBudget]);
         return newBudget;
-      } catch (err) {
-        // If it's an auth error, try to refresh the data
+      } catch (err) {
         if (err.message.includes("Authentication")) {
           await fetchBudgets(true);
         }
@@ -82,9 +68,7 @@ export function useBudgetData() {
       }
     },
     [budgetsAPI, isSignedIn, fetchBudgets]
-  );
-
-  // Update existing budget with retry logic
+  );
   const updateBudget = useCallback(
     async (id, updatedBudget) => {
       if (!budgetsAPI || !isSignedIn) {
@@ -98,8 +82,7 @@ export function useBudgetData() {
           prev.map((budget) => (budget._id === id ? updated : budget))
         );
         return updated;
-      } catch (err) {
-        // If it's an auth error, try to refresh the data
+      } catch (err) {
         if (err.message.includes("Authentication")) {
           await fetchBudgets(true);
         }
@@ -109,9 +92,7 @@ export function useBudgetData() {
       }
     },
     [budgetsAPI, isSignedIn, fetchBudgets]
-  );
-
-  // Delete budget with retry logic
+  );
   const deleteBudget = useCallback(
     async (id) => {
       if (!budgetsAPI || !isSignedIn) {
@@ -122,8 +103,7 @@ export function useBudgetData() {
         setError(null);
         await budgetsAPI.delete(id);
         setBudgets((prev) => prev.filter((budget) => budget._id !== id));
-      } catch (err) {
-        // If it's an auth error, try to refresh the data
+      } catch (err) {
         if (err.message.includes("Authentication")) {
           await fetchBudgets(true);
         }
@@ -133,9 +113,7 @@ export function useBudgetData() {
       }
     },
     [budgetsAPI, isSignedIn, fetchBudgets]
-  );
-
-  // Get budget for specific category
+  );
   const getBudgetForCategory = useCallback(
     (category, selectedCurrency) => {
       return budgets
@@ -145,9 +123,7 @@ export function useBudgetData() {
         );
     },
     [budgets]
-  );
-
-  // Fetch data when dependencies change
+  );
   useEffect(() => {
     if (isLoaded && isSignedIn) {
       fetchBudgets();

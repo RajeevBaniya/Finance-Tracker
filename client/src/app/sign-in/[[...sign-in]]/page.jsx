@@ -4,7 +4,7 @@ import { LineChart } from "lucide-react";
 function SignInPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-finance-cardBg p-4 relative overflow-hidden">
-      {/* Background effects */}
+      {}
       <div className="absolute inset-0 opacity-[0.03]">
         <div className="absolute inset-0" style={{
           backgroundImage: `

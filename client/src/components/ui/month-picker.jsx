@@ -37,17 +37,14 @@ export function MonthPicker({
   const currentMonth = currentDate.getMonth();
   const currentYear = currentDate.getFullYear();
 
-  // Store the current month and year to prevent unwanted resets
   const [stableMonth, setStableMonth] = useState(selectedMonth);
   const [stableYear, setStableYear] = useState(selectedYear);
 
-  // Update stable values when props change from outside
   useEffect(() => {
     setStableMonth(selectedMonth);
     setStableYear(selectedYear);
   }, [selectedMonth, selectedYear]);
 
-  // Generate available years (current year down to 2010)
   const availableYears = [];
   for (let i = 0; i <= currentYear - 2010; i++) {
     availableYears.push(currentYear - i);

@@ -1,4 +1,4 @@
-// Hook for fetching and managing financial records
+
 
 import { useState, useCallback, useEffect, useMemo } from "react";
 import { useAuth } from "@clerk/nextjs";
@@ -10,19 +10,16 @@ export function useFinancialData() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Create stable API instance - only recreate when getToken changes
   const financialRecordsAPI = useMemo(() => {
     return getToken ? createFinancialRecordsAPI(getToken) : null;
   }, [getToken]);
 
-  // Fetch all records with optimized dependencies
   const fetchRecords = useCallback(async () => {
-    // Don't fetch if auth is not loaded yet
+
     if (!isLoaded) {
       return;
     }
 
-    // If no user or API, clear data and set loading to false
     if (!financialRecordsAPI || !userId) {
       setAllRecords([]);
       setLoading(false);
@@ -38,14 +35,13 @@ export function useFinancialData() {
     } catch (err) {
       setError(err.message);
       console.error("Error fetching records:", err);
-      // Clear records on error
+
       setAllRecords([]);
     } finally {
       setLoading(false);
     }
   }, [financialRecordsAPI, userId, isLoaded]);
 
-  // Add new record
   const addRecord = useCallback(
     async (record) => {
       if (!financialRecordsAPI) {
@@ -66,7 +62,6 @@ export function useFinancialData() {
     [financialRecordsAPI]
   );
 
-  // Update existing record
   const updateRecord = useCallback(
     async (id, updatedRecord) => {
       if (!financialRecordsAPI) {
@@ -89,7 +84,6 @@ export function useFinancialData() {
     [financialRecordsAPI]
   );
 
-  // Delete record
   const deleteRecord = useCallback(
     async (id) => {
       if (!financialRecordsAPI) {
@@ -109,7 +103,6 @@ export function useFinancialData() {
     [financialRecordsAPI]
   );
 
-  // Fetch data when dependencies change
   useEffect(() => {
     fetchRecords();
   }, [fetchRecords]);

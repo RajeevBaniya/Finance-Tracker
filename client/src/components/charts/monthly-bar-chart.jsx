@@ -18,7 +18,6 @@ import {
 } from "@/components/ui/card";
 import { useFinancial } from "@/features/financial/context/financial-context";
 
-// Custom tooltip for the bar chart
 const CustomTooltip = ({ active, payload, label, formatCurrency }) => {
   if (active && payload && payload.length) {
     return (
@@ -81,12 +80,11 @@ export function MonthlyBarChart() {
     );
   }
 
-  // Process data for monthly bar chart
   const processData = () => {
     const monthlyData = {};
 
     records.forEach((record) => {
-      // Only process expenses (negative amounts)
+
       if (record.amount < 0) {
         const date = new Date(record.date);
         const monthKey = `${date.getFullYear()}-${String(
@@ -111,7 +109,6 @@ export function MonthlyBarChart() {
       }
     });
 
-    // Convert to array and sort by date
     const chartData = Object.values(monthlyData)
       .sort((a, b) => a.date - b.date)
       .map((item) => ({
@@ -175,7 +172,7 @@ export function MonthlyBarChart() {
           </ResponsiveContainer>
         </div>
 
-        {/* Income/Expenses Summary Stats - Responsive Grid */}
+        {}
         <div className="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4 text-center">
           <div className="p-2 sm:p-3 bg-green-50 rounded-lg">
             <div className="text-xs sm:text-sm text-green-600 font-medium">

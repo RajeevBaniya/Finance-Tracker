@@ -9,11 +9,10 @@ export const UserProvider = ({ children }) => {
   const { user, isLoaded } = useUser();
   const [userData, setUserData] = useState(null);
 
-  // Load user-specific data when user changes
   useEffect(() => {
     if (isLoaded && user) {
-      // You can load user-specific preferences here
-      // For now, we'll just set basic user info
+
+
       setUserData({
         id: user.id,
         email: user.primaryEmailAddress?.emailAddress,
