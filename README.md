@@ -4,7 +4,7 @@ A modern full-stack personal finance management application that helps users tra
 
 ##  Live Demo
 
-- **Live**: Demo [FinTrack](https://finance-tracker-apps.vercel.app/)
+- **Live**: Demo [FinTrack](https://fintrack-apps.vercel.app/)
 
 ##  Architecture
 
